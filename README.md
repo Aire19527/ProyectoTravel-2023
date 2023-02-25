@@ -12,7 +12,7 @@ Proyecto para enseñar a programar
             });
 #endregion
   
-** Pluguins ** 
+** Pluguins a Instalar en los Proyectos ** 
   
 1. App
 - Microsoft.EntityFrameworkCore.SqlServer
@@ -25,5 +25,6 @@ Proyecto para enseñar a programar
 
 
 ** comandos codeFirts **
-add-migration  _mensaje_
-update-databse
+
+- add-migration  _mensaje_
+- update-databse

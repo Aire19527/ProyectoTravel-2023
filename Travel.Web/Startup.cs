@@ -1,4 +1,8 @@
 using Infraestructure.Core.Data;
+using Infraestructure.Core.Repository;
+using Infraestructure.Core.Repository.Interface;
+using Infraestructure.Core.UnitOfWork;
+using Infraestructure.Core.UnitOfWork.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Travel.Domain.Services;
+using Travel.Domain.Services.Interface;
+using Travel.Web.Handlers;
 
 namespace Travel.Web
 {
@@ -33,6 +40,10 @@ namespace Travel.Web
             });
             #endregion
 
+
+            #region Inyection
+            DependencyInyectionHandler.DependencyInyectionConfig(services);
+            #endregion
 
             services.AddControllersWithViews();
         }

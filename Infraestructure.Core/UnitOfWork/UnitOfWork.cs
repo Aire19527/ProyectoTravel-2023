@@ -3,16 +3,19 @@ using Infraestructure.Core.Repository;
 using Infraestructure.Core.Repository.Interface;
 using Infraestructure.Core.UnitOfWork.Interface;
 using Infraestructure.Entity.Model;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Infraestructure.Core.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         #region Attibutes
         private readonly DataContext _context;
+        private bool disposed = false;
         #endregion
 
         //ctrl + k + s
@@ -77,8 +80,41 @@ namespace Infraestructure.Core.UnitOfWork
             }
         }
 
+
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
         #endregion
 
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public async Task<int> Save() => await _context.SaveChangesAsync();
 
 
     }

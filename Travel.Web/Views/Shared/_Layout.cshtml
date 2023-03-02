@@ -6,6 +6,16 @@
     <title>@ViewData["Title"] - Travel.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    @*animate*@
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    @*<link rel="stylesheet" href="~/lib/font-awresome/font-awesome-6.30.all.min.css">*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+          integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/lib/toastr/css/toastr.min.css">
 </head>
 <body>
     <header>
@@ -24,6 +34,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Autor" asp-action="Index">Autor</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Editorial" asp-action="Index">Editorial</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -35,6 +48,18 @@
         </main>
     </div>
 
+    <div class="modal fade" id="container-modal-procesando" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center;font-weight:bold">
+                    <p id="mensaje-modal-procesando">Por favor espere</p>
+                    <div align="center"><img width="100%" src="~/img/cargando_5.gif"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2023 - Travel.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -43,6 +68,54 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/toastr/js/toastr.min.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log("Hola mundo del gallinero 2");
+    });
+
+    function processModal(deploy, title) {
+        if (deploy) {
+            if (title!= undefined && title!=null){
+                $("#mensaje-modal-procesando").html(titulo);
+            }
+            else{
+                $("#mensaje-modal-procesando").html('Por favor espere');
+            }
+
+            $("#container-modal-procesando").modal({ backdrop: 'static', keyboard: false });
+        } else {
+            setTimeout(function () {
+                $('#container-modal-procesando').modal('hide');
+            }, 500);
+        }
+    }
+
+    function toastMessage(type, message) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: type,
+            title: message
+        });
+    }
+
+</script>

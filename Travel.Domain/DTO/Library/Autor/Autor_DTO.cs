@@ -7,10 +7,12 @@ namespace Travel.Domain.DTO.Library
 {
     public class Autor_DTO
     {
-        public int Id { get; set; }
         [MaxLength(200)]
+        [Required(ErrorMessage = "El campo [Nombre] es obligatoro")]
         public string Name { get; set; }
+
         [MaxLength(200)]
+        [Required(ErrorMessage = "El campo [Apellido] es obligatoro")]
         public string LastName { get; set; }
 
     }

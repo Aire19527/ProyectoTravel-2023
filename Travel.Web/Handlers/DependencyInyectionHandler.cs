@@ -20,7 +20,7 @@ namespace Travel.Web.Handlers
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
             //Domain
-            services.AddTransient<IAutoresServices, AutoresServices>();
+            services.AddTransient<IAutorServices, AutorServices>();
         }
     }
 }

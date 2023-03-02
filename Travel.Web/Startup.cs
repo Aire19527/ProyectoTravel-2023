@@ -45,6 +45,9 @@ namespace Travel.Web
             DependencyInyectionHandler.DependencyInyectionConfig(services);
             #endregion
 
+            //Esto es para que refresque los datos en ejecución
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
             services.AddControllersWithViews();
         }
 

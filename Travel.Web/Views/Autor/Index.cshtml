@@ -1,44 +1,319 @@
-﻿@model IEnumerable<Travel.Domain.DTO.Library.Autor_DTO>
-
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Autores";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h1> Listado de Autores</h1>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    <div class="col-md-6">
+        <button class="buttonTitle btn btn-primary" onclick="newAutor()">
+            <i class="iconMargin fa-solid fa-circle-plus"></i>
+            Nuevo Autor
+        </button>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Opciones</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoAutores">
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+
+@*modal*@
+<div class="modal fade" id="modalAutor" data-backdrop="static" data-keyboard="false" tabindex="1" role="dialog" aria-labelledby="modalPetLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idTituloModalAutor">Crear Autor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Nombre</label>
+                            <input type="text" class="form-control" id="txtNameAutor" placeholder="Nombre Autor" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Apellido</label>
+                            <input type="text" class="form-control" id="txtLastNameAutor" placeholder="Apellido Autor" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <i class="fas fa-window-close"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveAutor()">
+                    <i class="far fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+
+        var listAutor = [];
+        let idAutor = 0;
+        $(document).ready(function () {
+            getAllAutor();
+        });
+
+
+        function getAllAutor() {
+            processModal(true);
+            $.ajax({
+                url: '@Url.Action("GetAllAutores", "Autor")',
+                method: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    processModal(false);
+                    if (data.isSuccess) {
+                        listAutor = data.result;
+                        loadGridAutor(listAutor);
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    processModal(false);
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+
+        function loadGridAutor(data) {
+            $('#cuerpoAutores').html('');
+
+            for (let i = 0; i < data.length; i++) {
+                var tr = `
+                                                                <tr>
+                                                                    <th>`+ data[i].name + `</th>
+                                                                    <th>`+ data[i].lastName + `</th>
+                                                                    <td>
+                                                                        <button  class="btn btn-warning" onclick="editAutor(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                                                        <button class="btn btn-danger" onclick="deleteAutor(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                                    </td>
+                                                                </tr>
+                                                                                              `;
+                $('#cuerpoAutores').append(tr);
+            }
+
+        }
+
+        function newAutor() {
+            cleanForm();
+            $('#idTituloModalAutor').html("Crear Autor");
+            $('#modalAutor').modal({ keyboard: true });
+        }
+
+
+        function editAutor(id) {
+            idAutor = id;
+            let autor = listAutor.find(x => x.id == idAutor);
+            console.log("Editar Autor: ");
+            console.log(autor);
+
+            $('#txtNameAutor').val(autor.name);
+            $('#txtLastNameAutor').val(autor.lastName);
+
+
+            $('#idTituloModalAutor').html("Editar Autor");
+            $('#modalAutor').modal({ keyboard: true });
+        }
+
+        function deleteAutor(id) {
+            console.log("Eliminar Autor: " + id);
+
+            Swal.fire({
+                title: '¿Confirmar Eliminacion?',
+                text: "No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Si, Eliminar!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    //modalProcesando(true, 'Eliminando el Autor');
+                    //petición
+                    $.ajax({
+                        url: '@Url.Action("DeleteAutor", "Autor")',
+                        method: 'DELETE',
+                        data: {
+                            idAutor: id
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            //modalProcesando(false);
+                            console.log(data);
+                            if (data.isSuccess) {
+
+                                listAutor = listAutor.filter(x => x.id != id);
+                                loadGridAutor(listAutor);
+
+                                Swal.fire(
+                                    'Eliminado!',
+                                    data.message,
+                                    'success');
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    data.message,
+                                    'error');
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            //modalProcesando(false);
+                            console.error(xhr, textStatus, errorThrown);
+                        }
+                    });
+                }
+
+            });
+        }
+
+
+        function saveAutor() {
+            console.log("Mandó a guardar");
+
+            if (validarForm()) {
+                let parametro = {
+                    name: $("#txtNameAutor").val(),
+                    lastName: $("#txtLastNameAutor").val(),
+                };
+
+                if (idAutor == 0) {
+                    processModal(true);
+                    $.ajax({
+                        url: '@Url.Action("InsertAutor", "Autor")',
+                        method: 'POST',
+                        data: parametro,
+                        dataType: "json",
+                        success: function (data) {
+                            processModal(false);
+                            console.log(data);
+
+                            if (data.isSuccess) {
+                                $('#modalAutor').modal('hide');
+                                cleanForm();
+                                getAllAutor();
+                                toastMessage('success', data.message);
+                            }
+                            else {
+                                Swal.fire(
+                                    'Opps!',
+                                    data.message,
+                                    'error');
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            processModal(false);
+                            toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                            console.error(xhr, textStatus, errorThrown);
+                        }
+                    });
+                } else {
+                    parametro.id = idAutor;
+                    processModal(true);
+                    $.ajax({
+                        url: '@Url.Action("UpdateAutor", "Autor")',
+                        method: 'PUT',
+                        data: parametro,
+                        dataType: "json",
+                        success: function (data) {
+                            processModal(false);
+                            console.log(data);
+
+                            if (data.isSuccess) {
+                                $('#modalAutor').modal('hide');
+                                cleanForm();
+                                listAutor = listAutor.filter(x => x.id != idAutor);
+                                console.log(listAutor);
+                                listAutor.push(parametro);
+                                console.log(listAutor);
+                                loadGridAutor(listAutor);
+                                toastMessage('success', data.message);
+                            }
+                            else {
+                                Swal.fire(
+                                    'Opps!',
+                                    data.message,
+                                    'error');
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            processModal(false);
+                            toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                            console.error(xhr, textStatus, errorThrown);
+                        }
+                    });
+
+                }
+            }
+        }
+
+      
+
+        function cleanForm() {
+            $('#txtNameAutor').val('');
+            $('#txtLastNameAutor').val('');
+            idAutor = 0;
+        }
+
+        function validarForm() {
+            if ($("#txtNameAutor").val() == '') {
+                $("#txtNameAutor").focus();
+                toastMessage('warning', 'El Nombre es obligatorio.');
+                return false;
+            }
+
+            if ($("#txtLastNameAutor").val() == '') {
+                $("#txtLastNameAutor").focus();
+                toastMessage('warning', 'El Apellido es obligatorio.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 }
-    </tbody>
-</table>

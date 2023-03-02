@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Travel.Web", "Travel.Web\Travel.Web.csproj", "{5AE49EFD-2858-408E-B56E-3E309D2FFE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Travel.Web", "Travel.Web\Travel.Web.csproj", "{5AE49EFD-2858-408E-B56E-3E309D2FFE50}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. App", "1. App", "{CF32FC1A-3FBA-434C-86BF-05A9F5D9F04B}"
 EndProject
@@ -11,11 +11,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.  Domain", "2.  Domain", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Infraestructure", "3. Infraestructure", "{89D1776F-09E3-4AB3-B089-8B109D22CE08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Travel.Domain", "Travel.Domain\Travel.Domain.csproj", "{5FFE4336-37C8-4B40-B00D-39A51D9B2BF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Travel.Domain", "Travel.Domain\Travel.Domain.csproj", "{5FFE4336-37C8-4B40-B00D-39A51D9B2BF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infraestructure.Entity", "Infraestructure.Entity\Infraestructure.Entity.csproj", "{A6278A8B-44A0-4074-8FD6-2F57BCE9081B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructure.Entity", "Infraestructure.Entity\Infraestructure.Entity.csproj", "{A6278A8B-44A0-4074-8FD6-2F57BCE9081B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infraestructure.Core", "Infraestructure.Core\Infraestructure.Core.csproj", "{AD70B3EF-931A-485A-97D4-4C68F39FD57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructure.Core", "Infraestructure.Core\Infraestructure.Core.csproj", "{AD70B3EF-931A-485A-97D4-4C68F39FD57E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commnon.Utils", "Commnon.Utils\Commnon.Utils.csproj", "{61344A01-475A-4DD8-A9DB-D0706BAEEA9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Commnon", "4. Commnon", "{7C0FAC78-FD84-4228-9416-EC89B068B1A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,10 @@ Global
 		{AD70B3EF-931A-485A-97D4-4C68F39FD57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD70B3EF-931A-485A-97D4-4C68F39FD57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD70B3EF-931A-485A-97D4-4C68F39FD57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61344A01-475A-4DD8-A9DB-D0706BAEEA9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61344A01-475A-4DD8-A9DB-D0706BAEEA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61344A01-475A-4DD8-A9DB-D0706BAEEA9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61344A01-475A-4DD8-A9DB-D0706BAEEA9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +56,7 @@ Global
 		{5FFE4336-37C8-4B40-B00D-39A51D9B2BF1} = {A74387CA-17FD-4824-9B8E-7D9DE3E23BAB}
 		{A6278A8B-44A0-4074-8FD6-2F57BCE9081B} = {89D1776F-09E3-4AB3-B089-8B109D22CE08}
 		{AD70B3EF-931A-485A-97D4-4C68F39FD57E} = {89D1776F-09E3-4AB3-B089-8B109D22CE08}
+		{61344A01-475A-4DD8-A9DB-D0706BAEEA9F} = {7C0FAC78-FD84-4228-9416-EC89B068B1A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5FEFD3B-7108-4290-B0FE-799851789F11}

@@ -1,5 +1,7 @@
 ﻿using Infraestructure.Core.Repository.Interface;
 using Infraestructure.Entity.Model;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Threading.Tasks;
 
 namespace Infraestructure.Core.UnitOfWork.Interface
 {
@@ -12,5 +14,13 @@ namespace Infraestructure.Core.UnitOfWork.Interface
         IRepository<AutorBookEntity> AutorBookRepository { get; }
 
         IRepository<AutoresEntity> AutorRepository { get; }
+
+        void Dispose();
+
+        Task<int> Save();
+
+
+        IDbContextTransaction BeginTransaction();
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }

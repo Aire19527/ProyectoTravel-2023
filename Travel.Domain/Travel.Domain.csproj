@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Commnon.Utils\Commnon.Utils.csproj" />
     <ProjectReference Include="..\Infraestructure.Core\Infraestructure.Core.csproj" />
   </ItemGroup>
 

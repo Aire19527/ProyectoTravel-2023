@@ -91,15 +91,14 @@
             getAllAutor();
         });
 
-
         function getAllAutor() {
-            processModal(true);
+            showProgress();
             $.ajax({
                 url: '@Url.Action("GetAllAutores", "Autor")',
                 method: 'GET',
                 dataType: "json",
                 success: function (data) {
-                    processModal(false);
+                    hideProgress();
                     if (data.isSuccess) {
                         listAutor = data.result;
                         loadGridAutor(listAutor);
@@ -112,27 +111,26 @@
 
                 },
                 error: function (xhr, textStatus, errorThrown) {
-                    processModal(false);
+                    hideProgress();
                     console.error(xhr, textStatus, errorThrown);
                 }
             });
         }
-
 
         function loadGridAutor(data) {
             $('#cuerpoAutores').html('');
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                                                                <tr>
-                                                                    <th>`+ data[i].name + `</th>
-                                                                    <th>`+ data[i].lastName + `</th>
-                                                                    <td>
-                                                                        <button  class="btn btn-warning" onclick="editAutor(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                                                        <button class="btn btn-danger" onclick="deleteAutor(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                                                    </td>
-                                                                </tr>
-                                                                                              `;
+                            <tr>
+                                <th>`+ data[i].name + `</th>
+                                <th>`+ data[i].lastName + `</th>
+                                <td>
+                                    <button  class="btn btn-warning" onclick="editAutor(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteAutor(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                </td>
+                            </tr>
+                        `;
                 $('#cuerpoAutores').append(tr);
             }
 
@@ -144,13 +142,9 @@
             $('#modalAutor').modal({ keyboard: true });
         }
 
-
         function editAutor(id) {
             idAutor = id;
             let autor = listAutor.find(x => x.id == idAutor);
-            console.log("Editar Autor: ");
-            console.log(autor);
-
             $('#txtNameAutor').val(autor.name);
             $('#txtLastNameAutor').val(autor.lastName);
 
@@ -174,8 +168,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    //modalProcesando(true, 'Eliminando el Autor');
-                    //petición
+                    showProgress('Eliminando Autor');
                     $.ajax({
                         url: '@Url.Action("DeleteAutor", "Autor")',
                         method: 'DELETE',
@@ -184,7 +177,7 @@
                         },
                         dataType: "json",
                         success: function (data) {
-                            //modalProcesando(false);
+                            hideProgress();
                             console.log(data);
                             if (data.isSuccess) {
 
@@ -203,7 +196,7 @@
                             }
                         },
                         error: function (xhr, textStatus, errorThrown) {
-                            //modalProcesando(false);
+                            hideProgress();
                             console.error(xhr, textStatus, errorThrown);
                         }
                     });
@@ -212,10 +205,7 @@
             });
         }
 
-
         function saveAutor() {
-            console.log("Mandó a guardar");
-
             if (validarForm()) {
                 let parametro = {
                     name: $("#txtNameAutor").val(),
@@ -223,14 +213,14 @@
                 };
 
                 if (idAutor == 0) {
-                    processModal(true);
+                    showProgress();
                     $.ajax({
                         url: '@Url.Action("InsertAutor", "Autor")',
                         method: 'POST',
                         data: parametro,
                         dataType: "json",
                         success: function (data) {
-                            processModal(false);
+                            hideProgress();
                             console.log(data);
 
                             if (data.isSuccess) {
@@ -247,26 +237,27 @@
                             }
                         },
                         error: function (xhr, textStatus, errorThrown) {
-                            processModal(false);
+                            hideProgress();
                             toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
                             console.error(xhr, textStatus, errorThrown);
                         }
                     });
                 } else {
                     parametro.id = idAutor;
-                    processModal(true);
+                    showProgress();
                     $.ajax({
                         url: '@Url.Action("UpdateAutor", "Autor")',
                         method: 'PUT',
                         data: parametro,
                         dataType: "json",
                         success: function (data) {
-                            processModal(false);
+                            hideProgress();
                             console.log(data);
 
                             if (data.isSuccess) {
                                 $('#modalAutor').modal('hide');
                                 cleanForm();
+
                                 listAutor = listAutor.filter(x => x.id != idAutor);
                                 console.log(listAutor);
                                 listAutor.push(parametro);
@@ -282,17 +273,14 @@
                             }
                         },
                         error: function (xhr, textStatus, errorThrown) {
-                            processModal(false);
+                            hideProgress();
                             toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
                             console.error(xhr, textStatus, errorThrown);
                         }
                     });
-
                 }
             }
         }
-
-      
 
         function cleanForm() {
             $('#txtNameAutor').val('');

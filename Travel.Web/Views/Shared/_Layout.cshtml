@@ -59,12 +59,35 @@
         </div>
     </div>
 
+    <div id="spinner">
+        Loading...
+    </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2023 - Travel.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <style>
+        div#spinner {
+            display: none;
+            width: 100px;
+            height: 100px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            background: url(/img/cargando_5.gif) no-repeat center #fff;
+            text-align: center;
+            padding: 10px;
+            font: normal 16px Tahoma, Geneva, sans-serif;
+            border: 1px solid #666;
+            margin-left: -50px;
+            margin-top: -50px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -82,20 +105,27 @@
         console.log("Hola mundo del gallinero 2");
     });
 
-    function processModal(deploy, title) {
-        if (deploy) {
-            if (title!= undefined && title!=null){
-                $("#mensaje-modal-procesando").html(titulo);
+    var spinnerVisible = false;
+    function showProgress(title) {
+        if (!spinnerVisible) {
+            if (title != undefined && title != null) {
+                $("#mensaje-modal-procesando").html(title);
             }
-            else{
+            else {
                 $("#mensaje-modal-procesando").html('Por favor espere');
             }
-
             $("#container-modal-procesando").modal({ backdrop: 'static', keyboard: false });
-        } else {
+
+            spinnerVisible = true;
+        }
+    }
+
+    function hideProgress() {
+        if (spinnerVisible) {
             setTimeout(function () {
                 $('#container-modal-procesando').modal('hide');
             }, 500);
+            spinnerVisible = false;
         }
     }
 

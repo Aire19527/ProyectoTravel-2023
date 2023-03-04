@@ -11,9 +11,9 @@ namespace Infraestructure.Core.UnitOfWork.Interface
 
         IRepository<EditorialEntity> EditorialRepository { get; }
 
-        IRepository<AutorBookEntity> AutorBookRepository { get; }
+    
 
-        IRepository<AutoresEntity> AutorRepository { get; }
+        IRepository<AutorEntity> AutorRepository { get; }
 
         void Dispose();
 

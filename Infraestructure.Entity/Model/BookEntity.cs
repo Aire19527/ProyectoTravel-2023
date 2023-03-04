@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infraestructure.Entity.Model
 {
+    [Table("Book", Schema = "Library")]
     public class BookEntity
     {
         [Key]
@@ -12,6 +13,9 @@ namespace Infraestructure.Entity.Model
 
         [ForeignKey("EditorialEntity")]
         public int IdEditorial { get; set; }
+
+        [ForeignKey("AutorEntity")]
+        public int IdAutor { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -22,7 +26,7 @@ namespace Infraestructure.Entity.Model
 
 
         public EditorialEntity EditorialEntity { get; set; }
+        public AutorEntity AutorEntity { get; set; }
 
-        public IEnumerable<AutorBookEntity> AutorBookEntities { get; set; }
     }
 }

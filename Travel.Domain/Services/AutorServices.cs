@@ -29,7 +29,7 @@ namespace Travel.Domain.Services
 
         public List<ConsultAutor_DTO> GetAllAutores()
         {
-            IEnumerable<AutoresEntity> listAutors = _unitOfWork.AutorRepository.GetAll();
+            IEnumerable<AutorEntity> listAutors = _unitOfWork.AutorRepository.GetAll();
             List<ConsultAutor_DTO> result = listAutors.Select(x => new ConsultAutor_DTO()
             {
                 Id = x.Id,
@@ -42,7 +42,7 @@ namespace Travel.Domain.Services
 
         public async Task<bool> InsertAutor(Autor_DTO autor)
         {
-            AutoresEntity newAutor = new AutoresEntity()
+            AutorEntity newAutor = new AutorEntity()
             {
                 Name = autor.Name,
                 LastName = autor.LastName,
@@ -54,7 +54,7 @@ namespace Travel.Domain.Services
 
         public async Task<bool> UpdateAutor(ConsultAutor_DTO autor)
         {
-            AutoresEntity updateAutor = GetAutor(autor.Id);
+            AutorEntity updateAutor = GetAutor(autor.Id);
             updateAutor.Name=autor.Name;
             updateAutor.LastName=autor.LastName;
           
@@ -64,14 +64,14 @@ namespace Travel.Domain.Services
 
         public async Task<bool> DeleteAutor(int idAutor)
         {
-            AutoresEntity autor = GetAutor(idAutor);
+            AutorEntity autor = GetAutor(idAutor);
             _unitOfWork.AutorRepository.Delete(autor);
 
             return await _unitOfWork.Save() > 0;
         }
 
 
-        private AutoresEntity GetAutor(int idAutor) => _unitOfWork.AutorRepository.FirstOrDefaultNotTracking(x => x.Id == idAutor);
+        private AutorEntity GetAutor(int idAutor) => _unitOfWork.AutorRepository.FirstOrDefaultNotTracking(x => x.Id == idAutor);
 
         #endregion
     }

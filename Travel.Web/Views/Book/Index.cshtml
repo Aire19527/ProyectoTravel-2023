@@ -1,0 +1,263 @@
+﻿@{
+    ViewData["Title"] = "Libros";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1> Listado de Libros</h1>
+    </div>
+
+    <div class="col-md-6">
+        <button class="buttonTitle btn btn-primary" onclick="newBook()">
+            <i class="iconMargin fa-solid fa-circle-plus"></i>
+            Nuevo Libro
+        </button>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+
+        <table id="tblBook" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Titulo</th>
+                    <th scope="col">Autor</th>
+                    <th scope="col">Editorial</th>
+                    <th scope="col"># Paginas</th>
+                    <th scope="col">Opciones</th>
+                </tr>
+            </thead>
+            <tbody id="bodyBook">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@*modal*@
+<div class="modal fade" id="modalBook" data-backdrop="static" data-keyboard="false" tabindex="1" role="dialog" aria-labelledby="modalPetLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idTituloModalBook">Crear Libro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-10 form-group">
+                            <label for="recipient-name" class="col-form-label">Titulo</label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="txtTitulo" 
+                                maxlength="200"
+                                placeholder="Titulo del libro" required>
+
+                        </div>
+                        <div class="col-md-2 form-group">
+                            <label for="recipient-name" class="col-form-label"># Páginas</label>
+                            <input type="number" class="form-control" id="txtNumberPages" placeholder="Numero Páginas" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label for="recipient-name" class="col-form-label">Sinopsis</label>
+                         
+                            <textarea name="textarea"
+                                       rows="2" 
+                                       cols="50"
+                                      class="form-control"
+                                      id="txtSinopsis"
+                                      maxlength="1000"
+                                      placeholder="Sinopsis" required></textarea>
+
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Autor</label>
+                            <select class="form-control" id="cmbAutor">
+                                <option disabled >Seleccionar Autor</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Editorial</label>
+                            <select class="form-control" id="cmbEditorial">
+                                <option disabled>Seleccionar una Editorial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <i class="fas fa-window-close"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveAutor()">
+                    <i class="far fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+
+        let idBook = 0;
+        var listBook = [];
+        var listAutor = [];
+        var listEditorial= [];
+
+        $(document).ready(function () {
+            getAllBooks();
+            
+            getAllAutor();
+        });
+
+
+        function getAllBooks() {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("GetAllBook", "Book")',
+                method: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    if (data.isSuccess) {
+                        listBook = data.result;
+                        console.log(listBook);
+                       loadGrid(listBook);
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+       
+        function loadGrid(data) {
+            //llenar registro
+            if ($.fn.dataTable.isDataTable('#tblBook')) {
+                var table = $('#tblBook').DataTable();
+                table.destroy();
+                loadGridBook(data);
+                loadGridDataTable('tblBook');
+            }
+            else {
+                loadGridBook(data);
+                loadGridDataTable('tblBook');
+            }
+        }
+
+        function loadGridBook(data) {
+            $('#bodyBook').html('');
+
+            for (let i = 0; i < data.length; i++) {
+                var tr = `
+                                            <tr>
+                                                        <th>`+ data[i].title + `</th>
+                                                        <th>`+ data[i].autor + `</th>
+                                                        <th>`+ data[i].editorial + `</th>
+                                                        <th>`+ data[i].n_Pages + `</th>
+                                                <td>
+                                                    <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                                    <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                </td>
+                                            </tr>
+                                        `;
+                $('#bodyBook').append(tr);
+            }
+
+        }
+
+
+        ///Servicios extras
+        function getAllAutor() {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("GetAllAutores", "Autor")',
+                method: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    if (data.isSuccess) {
+                        listAutor = data.result;
+                        console.log(listAutor);
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+
+        function getAllEditorial() {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("GetAllEditorial", "Editorial")',
+                method: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    if (data.isSuccess) {
+                        listEditorial = data.result;
+                        console.log(listEditorial);
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+
+        function newBook() {
+            //cleanForm();
+            $('#idTituloModalBook').html("Crear Libro");
+            $('#modalBook').modal({ keyboard: true });
+        }
+
+
+    </script>
+}

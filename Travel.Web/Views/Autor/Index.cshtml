@@ -20,7 +20,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        <table class="table table-striped table-hover">
+        <table id="tblAutor" class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th scope="col">Nombre</th>
@@ -54,6 +54,7 @@
                         <div class="col-md-6 form-group">
                             <label for="recipient-name" class="col-form-label">Nombre</label>
                             <input type="text" class="form-control" id="txtNameAutor" placeholder="Nombre Autor" required>
+
                         </div>
                         <div class="col-md-6 form-group">
                             <label for="recipient-name" class="col-form-label">Apellido</label>
@@ -87,8 +88,10 @@
 
         var listAutor = [];
         let idAutor = 0;
+
         $(document).ready(function () {
             getAllAutor();
+
         });
 
         function getAllAutor() {
@@ -101,7 +104,7 @@
                     hideProgress();
                     if (data.isSuccess) {
                         listAutor = data.result;
-                        loadGridAutor(listAutor);
+                        loadGrid(listAutor);
                     } else {
                         Swal.fire(
                             'Opps!',
@@ -117,24 +120,43 @@
             });
         }
 
+
+        function loadGrid(data) {
+            //llenar registro
+            if ($.fn.dataTable.isDataTable('#tblAutor')) {
+                var table = $('#tblAutor').DataTable();
+                table.destroy();
+                loadGridAutor(data);
+                loadGridDataTable('tblAutor');
+            }
+            else {
+                loadGridAutor(data);
+                loadGridDataTable('tblAutor');
+            }
+        }
+
+
         function loadGridAutor(data) {
             $('#cuerpoAutores').html('');
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                            <tr>
-                                <th>`+ data[i].name + `</th>
-                                <th>`+ data[i].lastName + `</th>
-                                <td>
-                                    <button  class="btn btn-warning" onclick="editAutor(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                    <button class="btn btn-danger" onclick="deleteAutor(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                </td>
-                            </tr>
-                        `;
+                                    <tr>
+                                        <th>`+ data[i].name + `</th>
+                                        <th>`+ data[i].lastName + `</th>
+                                        <td>
+                                            <button  class="btn btn-warning" onclick="editAutor(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                            <button class="btn btn-danger" onclick="deleteAutorConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                        </td>
+                                    </tr>
+                                `;
                 $('#cuerpoAutores').append(tr);
             }
 
         }
+
+
+
 
         function newAutor() {
             cleanForm();
@@ -153,11 +175,11 @@
             $('#modalAutor').modal({ keyboard: true });
         }
 
-        function deleteAutor(id) {
+        function deleteAutorConfirm(id) {
             console.log("Eliminar Autor: " + id);
 
             Swal.fire({
-                title: '¿Confirmar Eliminacion?',
+                title: '¿Confirmar Eliminación?',
                 text: "No podrás revertir esto!",
                 icon: 'warning',
                 showCancelButton: true,
@@ -167,41 +189,8 @@
                 confirmButtonText: 'Si, Eliminar!',
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    showProgress('Eliminando Autor');
-                    $.ajax({
-                        url: '@Url.Action("DeleteAutor", "Autor")',
-                        method: 'DELETE',
-                        data: {
-                            idAutor: id
-                        },
-                        dataType: "json",
-                        success: function (data) {
-                            hideProgress();
-                            console.log(data);
-                            if (data.isSuccess) {
-
-                                listAutor = listAutor.filter(x => x.id != id);
-                                loadGridAutor(listAutor);
-
-                                Swal.fire(
-                                    'Eliminado!',
-                                    data.message,
-                                    'success');
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    data.message,
-                                    'error');
-                            }
-                        },
-                        error: function (xhr, textStatus, errorThrown) {
-                            hideProgress();
-                            console.error(xhr, textStatus, errorThrown);
-                        }
-                    });
+                    deleteAutor(id);
                 }
-
             });
         }
 
@@ -213,71 +202,10 @@
                 };
 
                 if (idAutor == 0) {
-                    showProgress();
-                    $.ajax({
-                        url: '@Url.Action("InsertAutor", "Autor")',
-                        method: 'POST',
-                        data: parametro,
-                        dataType: "json",
-                        success: function (data) {
-                            hideProgress();
-                            console.log(data);
-
-                            if (data.isSuccess) {
-                                $('#modalAutor').modal('hide');
-                                cleanForm();
-                                getAllAutor();
-                                toastMessage('success', data.message);
-                            }
-                            else {
-                                Swal.fire(
-                                    'Opps!',
-                                    data.message,
-                                    'error');
-                            }
-                        },
-                        error: function (xhr, textStatus, errorThrown) {
-                            hideProgress();
-                            toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
-                            console.error(xhr, textStatus, errorThrown);
-                        }
-                    });
+                    insertAutor(parametro);
                 } else {
                     parametro.id = idAutor;
-                    showProgress();
-                    $.ajax({
-                        url: '@Url.Action("UpdateAutor", "Autor")',
-                        method: 'PUT',
-                        data: parametro,
-                        dataType: "json",
-                        success: function (data) {
-                            hideProgress();
-                            console.log(data);
-
-                            if (data.isSuccess) {
-                                $('#modalAutor').modal('hide');
-                                cleanForm();
-
-                                listAutor = listAutor.filter(x => x.id != idAutor);
-                                console.log(listAutor);
-                                listAutor.push(parametro);
-                                console.log(listAutor);
-                                loadGridAutor(listAutor);
-                                toastMessage('success', data.message);
-                            }
-                            else {
-                                Swal.fire(
-                                    'Opps!',
-                                    data.message,
-                                    'error');
-                            }
-                        },
-                        error: function (xhr, textStatus, errorThrown) {
-                            hideProgress();
-                            toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
-                            console.error(xhr, textStatus, errorThrown);
-                        }
-                    });
+                    updateAutor(parametro);
                 }
             }
         }
@@ -302,6 +230,110 @@
             }
 
             return true;
+        }
+
+
+        function deleteAutor(idAutor){
+            showProgress('Eliminando Autor');
+            $.ajax({
+                url: '@Url.Action("DeleteAutor", "Autor")',
+                method: 'DELETE',
+                data: {
+                    idAutor: idAutor
+                },
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+                    if (data.isSuccess) {
+
+                        listAutor = listAutor.filter(x => x.id != idAutor);
+                        loadGridAutor(listAutor);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            data.message,
+                            'success');
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function insertAutor(autor) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("InsertAutor", "Autor")',
+                method: 'POST',
+                data: autor,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalAutor').modal('hide');
+                        cleanForm();
+                        getAllAutor();
+                        toastMessage('success', data.message);
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function updateAutor(autor) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("UpdateAutor", "Autor")',
+                method: 'PUT',
+                data: autor,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalAutor').modal('hide');
+
+                        listAutor = listAutor.filter(x => x.id != autor.id);
+                        listAutor.push(autor);
+                        loadGridAutor(listAutor);
+                        toastMessage('success', data.message);
+
+                        cleanForm();
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
         }
     </script>
 }

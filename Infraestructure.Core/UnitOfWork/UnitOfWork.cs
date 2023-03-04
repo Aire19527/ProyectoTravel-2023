@@ -29,8 +29,7 @@ namespace Infraestructure.Core.UnitOfWork
         #region Properties
 
         private IRepository<EditorialEntity> editorialRepository;
-        private IRepository<AutorBookEntity> autorBookRepository;
-        private IRepository<AutoresEntity> autoresRepository;
+        private IRepository<AutorEntity> autoresRepository;
         private IRepository<BookEntity> bookRepository;
         #endregion
 
@@ -58,23 +57,12 @@ namespace Infraestructure.Core.UnitOfWork
             }
         }
 
-        public IRepository<AutorBookEntity> AutorBookRepository
-        {
-            get
-            {
-                if (this.autorBookRepository == null)
-                    this.autorBookRepository = new Repository<AutorBookEntity>(_context);
-
-                return autorBookRepository;
-            }
-        }
-
-        public IRepository<AutoresEntity> AutorRepository
+        public IRepository<AutorEntity> AutorRepository
         {
             get
             {
                 if (this.autoresRepository == null)
-                    this.autoresRepository = new Repository<AutoresEntity>(_context);
+                    this.autoresRepository = new Repository<AutorEntity>(_context);
 
                 return autoresRepository;
             }

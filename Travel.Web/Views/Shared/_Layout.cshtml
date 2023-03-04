@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
+    @*Datable*@
+    <link rel="stylesheet" href="~/lib/dataTable/datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/dataTable/DataTables-1.13.3/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/lib/dataTable/Buttons-2.3.5/css/buttons.bootstrap4.min.css" />
+
+
     @*animate*@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -37,6 +43,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Editorial" asp-action="Index">Editorial</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Book</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -59,9 +69,6 @@
         </div>
     </div>
 
-    <div id="spinner">
-        Loading...
-    </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
@@ -69,30 +76,17 @@
         </div>
     </footer>
 
-    <style>
-        div#spinner {
-            display: none;
-            width: 100px;
-            height: 100px;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            background: url(/img/cargando_5.gif) no-repeat center #fff;
-            text-align: center;
-            padding: 10px;
-            font: normal 16px Tahoma, Geneva, sans-serif;
-            border: 1px solid #666;
-            margin-left: -50px;
-            margin-top: -50px;
-            z-index: 2;
-            overflow: auto;
-        }
-    </style>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/toastr/js/toastr.min.js"></script>
     <script src="~/lib/sweetalert2/sweetalert2.js"></script>
+
+    @*datable*@
+    <script src="~/lib/dataTable/datatables.min.js"></script>
+    <script src="~/lib/dataTable/DataTables-1.13.3/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/lib/dataTable/Buttons-2.3.5/js/buttons.bootstrap4.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>
@@ -128,6 +122,7 @@
             spinnerVisible = false;
         }
     }
+
 
     function toastMessage(type, message) {
         const Toast = Swal.mixin({

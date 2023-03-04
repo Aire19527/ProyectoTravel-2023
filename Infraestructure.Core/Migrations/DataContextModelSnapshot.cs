@@ -18,29 +18,7 @@ namespace Infraestructure.Core.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Infraestructure.Entity.Model.AutorBookEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("IdAutor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdBook")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdAutor");
-
-                    b.HasIndex("IdBook");
-
-                    b.ToTable("AutorBookEntity");
-                });
-
-            modelBuilder.Entity("Infraestructure.Entity.Model.AutoresEntity", b =>
+            modelBuilder.Entity("Infraestructure.Entity.Model.AutorEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,7 +35,7 @@ namespace Infraestructure.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AutoresEntity");
+                    b.ToTable("Autor","Library");
                 });
 
             modelBuilder.Entity("Infraestructure.Entity.Model.BookEntity", b =>
@@ -66,6 +44,9 @@ namespace Infraestructure.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("IdAutor")
+                        .HasColumnType("int");
 
                     b.Property<int>("IdEditorial")
                         .HasColumnType("int");
@@ -84,9 +65,11 @@ namespace Infraestructure.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdAutor");
+
                     b.HasIndex("IdEditorial");
 
-                    b.ToTable("BookEntity");
+                    b.ToTable("Book","Library");
                 });
 
             modelBuilder.Entity("Infraestructure.Entity.Model.EditorialEntity", b =>
@@ -97,6 +80,7 @@ namespace Infraestructure.Core.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(300)")
                         .HasMaxLength(300);
 
@@ -106,26 +90,17 @@ namespace Infraestructure.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EditorialEntity");
-                });
-
-            modelBuilder.Entity("Infraestructure.Entity.Model.AutorBookEntity", b =>
-                {
-                    b.HasOne("Infraestructure.Entity.Model.AutoresEntity", "AutoresEntity")
-                        .WithMany("AutorBookEntities")
-                        .HasForeignKey("IdAutor")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infraestructure.Entity.Model.BookEntity", "BookEntity")
-                        .WithMany("AutorBookEntities")
-                        .HasForeignKey("IdBook")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Editorial","Library");
                 });
 
             modelBuilder.Entity("Infraestructure.Entity.Model.BookEntity", b =>
                 {
+                    b.HasOne("Infraestructure.Entity.Model.AutorEntity", "AutorEntity")
+                        .WithMany("BookEntities")
+                        .HasForeignKey("IdAutor")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Infraestructure.Entity.Model.EditorialEntity", "EditorialEntity")
                         .WithMany("BookEntities")
                         .HasForeignKey("IdEditorial")

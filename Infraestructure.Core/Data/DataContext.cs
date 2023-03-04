@@ -13,8 +13,7 @@ namespace Infraestructure.Core.Data
 
         }
 
-        public DbSet<AutorBookEntity> AutorBookEntity { get; set; }
-        public DbSet<AutoresEntity> AutoresEntity { get; set; }
+        public DbSet<AutorEntity> AutoresEntity { get; set; }
         public DbSet<BookEntity> BookEntity { get; set; }
         public DbSet<EditorialEntity> EditorialEntity { get; set; }
 

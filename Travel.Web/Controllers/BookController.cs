@@ -12,7 +12,7 @@ namespace Travel.Web.Controllers
     public class BookController : Controller
     {
         #region Attributes
-        private readonly IBookServices _bookServices; 
+        private readonly IBookServices _bookServices;
         #endregion
 
         #region Builder
@@ -44,7 +44,7 @@ namespace Travel.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertAutor(AddBook_Dto book)
+        public async Task<IActionResult> InsertBook(AddBook_Dto book)
         {
             IActionResult response;
 

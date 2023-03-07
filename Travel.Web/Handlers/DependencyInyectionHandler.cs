@@ -22,6 +22,7 @@ namespace Travel.Web.Handlers
             //Domain
             services.AddTransient<IAutorServices, AutorServices>();
             services.AddTransient<IBookServices, BookServices>();
+            services.AddTransient<IEditorialServices, EditorialServices>();
         }
     }
 }

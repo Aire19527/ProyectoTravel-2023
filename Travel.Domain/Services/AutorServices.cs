@@ -35,6 +35,7 @@ namespace Travel.Domain.Services
                 Id = x.Id,
                 Name = x.Name,
                 LastName = x.LastName,
+                FullName = x.FullName
             }).ToList();
 
             return result;
@@ -55,9 +56,9 @@ namespace Travel.Domain.Services
         public async Task<bool> UpdateAutor(ConsultAutor_DTO autor)
         {
             AutorEntity updateAutor = GetAutor(autor.Id);
-            updateAutor.Name=autor.Name;
-            updateAutor.LastName=autor.LastName;
-          
+            updateAutor.Name = autor.Name;
+            updateAutor.LastName = autor.LastName;
+
             _unitOfWork.AutorRepository.Update(updateAutor);
             return await _unitOfWork.Save() > 0;
         }

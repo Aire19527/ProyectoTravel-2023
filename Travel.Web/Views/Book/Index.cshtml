@@ -55,11 +55,11 @@
                     <div class="row">
                         <div class="col-md-10 form-group">
                             <label for="recipient-name" class="col-form-label">Titulo</label>
-                            <input type="text" 
-                                class="form-control" 
-                                id="txtTitulo" 
-                                maxlength="200"
-                                placeholder="Titulo del libro" required>
+                            <input type="text"
+                                   class="form-control"
+                                   id="txtTitulo"
+                                   maxlength="200"
+                                   placeholder="Titulo del libro" required>
 
                         </div>
                         <div class="col-md-2 form-group">
@@ -70,10 +70,10 @@
                     <div class="row">
                         <div class="col-md-12 form-group">
                             <label for="recipient-name" class="col-form-label">Sinopsis</label>
-                         
+
                             <textarea name="textarea"
-                                       rows="2" 
-                                       cols="50"
+                                      rows="2"
+                                      cols="50"
                                       class="form-control"
                                       id="txtSinopsis"
                                       maxlength="1000"
@@ -86,14 +86,14 @@
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label for="recipient-name" class="col-form-label">Autor</label>
-                            <select class="form-control" id="cmbAutor">
-                                <option disabled >Seleccionar Autor</option>
+                            <select class="form-control" id="cmbAutor" onchange="selectaAutor()">
+                                <option disabled>Seleccionar Autor</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 form-group">
                             <label for="recipient-name" class="col-form-label">Editorial</label>
-                            <select class="form-control" id="cmbEditorial">
+                            <select class="form-control" id="cmbEditorial" onchange="selectaEditorial()">
                                 <option disabled>Seleccionar una Editorial</option>
                             </select>
                         </div>
@@ -106,7 +106,7 @@
                     <i class="fas fa-window-close"></i>
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-success" onclick="saveAutor()">
+                <button type="button" class="btn btn-success" onclick="saveBook()">
                     <i class="far fa-save"></i>
                     Guardar
                 </button>
@@ -125,15 +125,17 @@
         let idBook = 0;
         var listBook = [];
         var listAutor = [];
-        var listEditorial= [];
-
+        var listEditorial = [];
+        let idAutor = 0;
+        let idEditorial = 0;
         $(document).ready(function () {
             getAllBooks();
-            
+
             getAllAutor();
+            getAllEditorial();
         });
 
-
+        ///Servicios Book
         function getAllBooks() {
             showProgress();
             $.ajax({
@@ -145,7 +147,7 @@
                     if (data.isSuccess) {
                         listBook = data.result;
                         console.log(listBook);
-                       loadGrid(listBook);
+                        loadGrid(listBook);
                     } else {
                         Swal.fire(
                             'Opps!',
@@ -160,7 +162,7 @@
                 }
             });
         }
-       
+
         function loadGrid(data) {
             //llenar registro
             if ($.fn.dataTable.isDataTable('#tblBook')) {
@@ -180,24 +182,244 @@
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                                            <tr>
-                                                        <th>`+ data[i].title + `</th>
-                                                        <th>`+ data[i].autor + `</th>
-                                                        <th>`+ data[i].editorial + `</th>
-                                                        <th>`+ data[i].n_Pages + `</th>
-                                                <td>
-                                                    <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                                    <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                                </td>
-                                            </tr>
-                                        `;
+                                <tr>
+                                            <th>`+ data[i].title + `</th>
+                                            <th>`+ data[i].autor + `</th>
+                                            <th>`+ data[i].editorial + `</th>
+                                            <th>`+ data[i].n_Pages + `</th>
+                                    <td>
+                                        <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                        <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                    </td>
+                                </tr>
+                      `;
                 $('#bodyBook').append(tr);
             }
 
         }
 
+        function saveBook() {
+            if (validarForm()) {
+                let parametro = {
+                    title: $("#txtTitulo").val(),
+                    n_Pages: $("#txtNumberPages").val(),
+                    sinopsis: $("#txtSinopsis").val(),
+                    idEditorial: idEditorial,
+                    idAutor: idAutor
+                };
+                console.log(parametro);
 
-        ///Servicios extras
+                if (idBook == 0) {
+                    insertBook(parametro);
+                } else {
+                    parametro.id = idBook;
+                    updateAutor(parametro);
+                }
+            }
+        }
+
+        function cleanForm() {
+            $("#txtTitulo").val('');
+            $("#txtNumberPages").val('');
+            $("#txtSinopsis").val('');
+            idAutor = 0;
+            idEditorial = 0;
+        }
+
+        function validarForm() {
+            if ($("#txtTitulo").val() == '') {
+                $("#txtTitulo").focus();
+                toastMessage('warning', 'El titúlo es obligatorio.');
+                return false;
+            }
+
+            if ($("#txtNumberPages").val() == '') {
+                $("#txtNumberPages").focus();
+                toastMessage('warning', 'El Número de Páginas es obligatorio.');
+                return false;
+            }
+
+            if ($("#txtSinopsis").val() == '') {
+                $("#txtSinopsis").focus();
+                toastMessage('warning', 'La Sinopsis es obligatorio.');
+                return false;
+            }
+
+            if (idAutor == 0) {
+                $("#cmbAutor").focus();
+                toastMessage('warning', 'Por favor seleccione un Autor.');
+                return false;
+            }
+
+            if (idEditorial == 0) {
+                $("#cmbEditorial").focus();
+                toastMessage('warning', 'Por favor seleccione una Editorial.');
+                return false;
+            }
+
+            return true;
+        }
+
+        //funciones call crud
+        function newBook() {
+            cleanForm();
+            $('#idTituloModalBook').html("Crear Libro");
+            $('#modalBook').modal({ keyboard: true });
+        }
+
+        function deleteBookConfirm(idBook) {
+            Swal.fire({
+                title: '¿Confirmar Eliminación?',
+                text: "No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Si, Eliminar!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAutor(idBook);
+                }
+            });
+        }
+
+        function editBook(id){
+            idBook = id;
+            let book = listBook.find(x => x.id == idBook);
+            console.log(book);
+
+            $("#txtTitulo").val(book.title);
+            $("#txtNumberPages").val(book.n_Pages);
+            $("#txtSinopsis").val(book.sinopsis);
+
+            idAutor = book.idAutor;
+            idEditorial = book.idEditorial;
+
+            loadCmbAutor(listAutor, idAutor);
+            loadCmbEditorial(listEditorial, idEditorial);
+            
+            $('#idTituloModalBook').html("Editar Libro");
+            $('#modalBook').modal({ keyboard: true });
+        }
+
+        //CRUD
+        function insertBook(book) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("InsertBook", "Book")',
+                method: 'POST',
+                data: book,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalBook').modal('hide');
+                        cleanForm();
+                        getAllBooks();
+                        toastMessage('success', data.message);
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function updateAutor(book) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("UpdateBook", "Book")',
+                method: 'PUT',
+                data: book,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalBook').modal('hide');
+
+                        //console.log("Paso #1");
+                        //console.log(listBook);
+                        
+                        //console.log("Paso #2");
+                        //listBook = listBook.filter(x => x.id != book.id);
+                        //console.log(listBook);
+
+                        //console.log("Paso #3");
+                        //listBook.push(book);
+                        //console.log(listBook);
+
+                     getAllBooks();
+                        toastMessage('success', data.message);
+
+                        cleanForm();
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function deleteAutor(idBook) {
+            showProgress('Eliminando Libro');
+            $.ajax({
+                url: '@Url.Action("DeleteBook", "Book")',
+                method: 'DELETE',
+                data: {
+                    idBook: idBook
+                },
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+                    if (data.isSuccess) {
+
+                        listBook = listBook.filter(x => x.id != idBook);
+                        loadGrid(listBook);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            data.message,
+                            'success');
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+
+
+
+        ///Servicios Autor
         function getAllAutor() {
             showProgress();
             $.ajax({
@@ -209,6 +431,9 @@
                     if (data.isSuccess) {
                         listAutor = data.result;
                         console.log(listAutor);
+                        loadCmbAutor(listAutor);
+
+
                     } else {
                         Swal.fire(
                             'Opps!',
@@ -224,7 +449,27 @@
             });
         }
 
+        function loadCmbAutor(data, selected) {
+            $('#cmbAutor').empty();
+            $("#cmbAutor").append('<option value="" disabled selected>Seleccione un Autor</option>');
+            $.each(data, function (i, lista) {
+                if (data[i].id == selected) {
+                    $("#cmbAutor").append('<option style="cursor:pointer;" " value="' + data[i].id + '"selected>' + data[i].fullName + '</option>');
+                } else {
+                    $("#cmbAutor").append('<option style="cursor:pointer;" " value="' + data[i].id + '">' + data[i].fullName + '</option>');
+                }
+            });
+        }
 
+        function selectaAutor() {
+            var combo = document.getElementById("cmbAutor");
+            let selected = combo.options[combo.selectedIndex].value;
+            console.log(selected);
+            //let text = combo.options[combo.selectedIndex].text;
+            idAutor = selected;
+        }
+
+        ///Servicios Editorial
         function getAllEditorial() {
             showProgress();
             $.ajax({
@@ -236,6 +481,7 @@
                     if (data.isSuccess) {
                         listEditorial = data.result;
                         console.log(listEditorial);
+                        loadCmbEditorial(listEditorial);
                     } else {
                         Swal.fire(
                             'Opps!',
@@ -251,12 +497,31 @@
             });
         }
 
-
-        function newBook() {
-            //cleanForm();
-            $('#idTituloModalBook').html("Crear Libro");
-            $('#modalBook').modal({ keyboard: true });
+        function loadCmbEditorial(data, selected) {
+            $('#cmbEditorial').empty();
+            $("#cmbEditorial").append('<option value="" disabled selected>Seleccione una Editorial</option>');
+            $.each(data, function (i, lista) {
+                if (data[i].id == selected) {
+                    $("#cmbEditorial").append('<option style="cursor:pointer;" " value="' + data[i].id + '"selected>' + data[i].name + '</option>');
+                } else {
+                    $("#cmbEditorial").append('<option style="cursor:pointer;" " value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+            });
         }
+
+        function selectaEditorial() {
+            var combo = document.getElementById("cmbEditorial");
+            let selected = combo.options[combo.selectedIndex].value;
+            console.log(selected);
+            //let text = combo.options[combo.selectedIndex].text;
+            idEditorial = selected;
+        }
+
+
+
+
+
+
 
 
     </script>

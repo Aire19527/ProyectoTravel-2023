@@ -7,17 +7,39 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Infraestructure.Core.Data;
 using Infraestructure.Entity.Model;
+using Travel.Domain.Services.Interface;
+using Travel.Domain.DTO;
+using Travel.Domain.Services;
 
 namespace Travel.Web.Controllers
 {
     public class EditorialController : Controller
     {
         private readonly DataContext _context;
+        private readonly IEditorialServices _editorialServices;
 
-        public EditorialController(DataContext context)
+        public EditorialController(DataContext context, IEditorialServices editorialServices)
         {
             _context = context;
+            this._editorialServices = editorialServices;
         }
+
+
+        #region Services
+
+        [HttpGet]
+        public IActionResult GetAllEditorial()
+        {
+            var result = _editorialServices.GetAllEditorial();
+            return Ok(new ResponseDto()
+            {
+                IsSuccess = true,
+                Message = string.Empty,
+                Result = result
+            });
+        }
+
+        #endregion
 
         // GET: Editorial
         public async Task<IActionResult> Index()

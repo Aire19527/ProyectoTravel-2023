@@ -29,6 +29,7 @@ namespace Travel.Domain.Services
 
         public List<ConsultBook_Dto> GetAllBook()
         {
+            
             IEnumerable<BookEntity> list = _unitOfWork.BookRepository.GetAll(e => e.EditorialEntity,
                                                                              a => a.AutorEntity);
 
@@ -40,7 +41,8 @@ namespace Travel.Domain.Services
                 Sinopsis = x.Sinopsis,
                 Title = x.Title,
                 Editorial = x.EditorialEntity.Name,
-                Autor = x.AutorEntity.FullName
+                Autor = x.AutorEntity.FullName,
+                IdAutor=x.IdAutor
             }).ToList();
 
             return result;
@@ -72,7 +74,7 @@ namespace Travel.Domain.Services
             book.IdAutor = update.IdAutor;
 
 
-            _unitOfWork.BookRepository.Insert(book);
+            _unitOfWork.BookRepository.Update(book);
             return await _unitOfWork.Save() > 0;
         }
 

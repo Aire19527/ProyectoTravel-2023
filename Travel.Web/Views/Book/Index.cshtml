@@ -106,7 +106,7 @@
                     <i class="fas fa-window-close"></i>
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-success" onclick="saveBook()">
+                <button type="button" id="btnSave" class="btn btn-success"  onclick="saveBook()">
                     <i class="far fa-save"></i>
                     Guardar
                 </button>
@@ -190,6 +190,7 @@
                                     <td>
                                         <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
                                         <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
                                     </td>
                                 </tr>
                       `;
@@ -224,6 +225,8 @@
             $("#txtSinopsis").val('');
             idAutor = 0;
             idEditorial = 0;
+
+
         }
 
         function validarForm() {
@@ -263,6 +266,7 @@
         //funciones call crud
         function newBook() {
             cleanForm();
+            viewDatail(false);
             $('#idTituloModalBook').html("Crear Libro");
             $('#modalBook').modal({ keyboard: true });
         }
@@ -298,7 +302,8 @@
 
             loadCmbAutor(listAutor, idAutor);
             loadCmbEditorial(listEditorial, idEditorial);
-            
+
+            viewDatail(false);
             $('#idTituloModalBook').html("Editar Libro");
             $('#modalBook').modal({ keyboard: true });
         }
@@ -517,9 +522,35 @@
             idEditorial = selected;
         }
 
+        function detail(id) {
+            idBook = id;
+            let book = listBook.find(x => x.id == idBook);
+            console.log(book);
 
+            $("#txtTitulo").val(book.title);
+            $("#txtNumberPages").val(book.n_Pages);
+            $("#txtSinopsis").val(book.sinopsis);
 
+            idAutor = book.idAutor;
+            idEditorial = book.idEditorial;
 
+            loadCmbAutor(listAutor, idAutor);
+            loadCmbEditorial(listEditorial, idEditorial);
+
+            $('#idTituloModalBook').html("Detalle Libro");
+            $('#modalBook').modal({ keyboard: true });
+
+            viewDatail(true);
+        }
+
+        function viewDatail(habilitar){
+            $("#txtTitulo").attr('disabled', habilitar);
+            $("#txtNumberPages").attr('disabled', habilitar);
+            $("#txtSinopsis").attr('disabled', habilitar);
+            $("#cmbEditorial").attr('disabled', habilitar);
+            $("#cmbAutor").attr('disabled', habilitar);
+            $('#btnSave').attr('hidden', habilitar);
+        }
 
 
 

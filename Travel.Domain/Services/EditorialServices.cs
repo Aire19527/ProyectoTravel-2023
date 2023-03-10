@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Travel.Domain.DTO.Library.Autor;
+using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Editorial;
 using Travel.Domain.Services.Interface;
 
@@ -37,6 +40,42 @@ namespace Travel.Domain.Services
 
             return result;
         }
+
+        public async Task<bool> InsertEditorial(AddEditorial_Dto editorial)
+        {
+            EditorialEntity newEditorial = new EditorialEntity()
+            {
+                Name = editorial.Name,
+                Sede = editorial.Sede
+            };
+
+            _unitOfWork.EditorialRepository.Insert(newEditorial);
+            return await _unitOfWork.Save() > 0;
+        }
+
+        public async Task<bool> UpdateEditorial(Editorial_Dto edit)
+        {
+            EditorialEntity editorial = GetEditorial(edit.Id);
+
+            editorial.Name = edit.Name;
+            editorial.Sede = edit.Sede;
+
+            _unitOfWork.EditorialRepository.Update(editorial);
+            return await _unitOfWork.Save() > 0;
+        }
+
+        public async Task<bool> DeleteEditorial(int idEditorial)
+        {
+            EditorialEntity editorial = GetEditorial(idEditorial);
+            _unitOfWork.EditorialRepository.Delete(editorial);
+
+            return await _unitOfWork.Save() > 0;
+        }
+
+
+        private EditorialEntity GetEditorial(int idEditorial) => _unitOfWork.EditorialRepository.FirstOrDefaultNotTracking(x => x.Id == idEditorial);
+
+
 
         #endregion
     }

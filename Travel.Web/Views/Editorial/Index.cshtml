@@ -1,41 +1,336 @@
-﻿@model IEnumerable<Infraestructure.Entity.Model.EditorialEntity>
-
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Editorial";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h1> Listado de Editoriales</h1>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sede)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sede)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <div class="col-md-6">
+        <button class="buttonTitle btn btn-primary" onclick="newEditorial()">
+            <i class="iconMargin fa-solid fa-circle-plus"></i>
+            Nueva Editorial
+        </button>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+
+        <table id="tblEditorial" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Sede</th>
+                    <th scope="col">Opciones</th>
+                </tr>
+            </thead>
+            <tbody id="bodyEditorial">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@*modal*@
+<div class="modal fade" id="modalEditorial" data-backdrop="static" data-keyboard="false" tabindex="1" role="dialog" aria-labelledby="modalPetLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idTituloModalEditorial">Crear Editorial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Nombre</label>
+                            <input type="text" class="form-control" id="txtName" placeholder="Nombre Editorial" required>
+
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Sede</label>
+                            <input type="text" class="form-control" id="txtSede" placeholder="Sede" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <i class="fas fa-window-close"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveEditorial()">
+                    <i class="far fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+
+        var listEditorial = [];
+        let idEditorial = 0;
+
+        $(document).ready(function () {
+            getAllEditorial();
+
+        });
+
+        function getAllEditorial() {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("GetAllEditorial", "Editorial")',
+                method: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    if (data.isSuccess) {
+                        listEditorial = data.result;
+                        loadGrid(listEditorial);
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+
+        function loadGrid(data) {
+            //llenar registro
+            if ($.fn.dataTable.isDataTable('#tblEditorial')) {
+                var table = $('#tblEditorial').DataTable();
+                table.destroy();
+                loadGridEditorial(data);
+                loadGridDataTable('tblEditorial');
+            }
+            else {
+                loadGridEditorial(data);
+                loadGridDataTable('tblEditorial');
+            }
+        }
+
+
+        function loadGridEditorial(data) {
+            $('#bodyEditorial').html('');
+
+            for (let i = 0; i < data.length; i++) {
+                var tr = `
+                                            <tr>
+                                                <th>`+ data[i].name + `</th>
+                                                <th>`+ data[i].sede + `</th>
+                                                <td>
+                                                    <button  class="btn btn-warning" onclick="editEditorial(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                                    <button class="btn btn-danger" onclick="deleteEditorialConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                </td>
+                                            </tr>
+                                        `;
+                $('#bodyEditorial').append(tr);
+            }
+
+        }
+
+
+        function newEditorial() {
+            cleanForm();
+            $('#idTituloModalEditorial').html("Crear Editorial");
+            $('#modalEditorial').modal({ keyboard: true });
+        }
+
+        function editEditorial(id) {
+            idEditorial = id;
+            let editorial = listEditorial.find(x => x.id == idEditorial);
+            $('#txtName').val(editorial.name);
+            $('#txtSede').val(editorial.sede);
+
+
+            $('#idTituloModalEditorial').html("Editar Editorial");
+            $('#modalEditorial').modal({ keyboard: true });
+        }
+
+        function deleteEditorialConfirm(id) {
+            console.log("Eliminar Editorial: " + id);
+
+            Swal.fire({
+                title: '¿Confirmar Eliminación?',
+                text: "No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Si, Eliminar!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteEditorial(id);
+                }
+            });
+        }
+
+        function saveEditorial() {
+            if (validarForm()) {
+                let parametro = {
+                    name: $("#txtName").val(),
+                    sede: $("#txtSede").val(),
+                };
+
+                if (idEditorial == 0) {
+                    insertEditorial(parametro);
+                } else {
+                    parametro.id = idEditorial;
+                    updateEditorial(parametro);
+                }
+            }
+        }
+
+        function cleanForm() {
+            
+            $('#txtName').val('');
+            $('#txtSede').val('');
+            idEditorial = 0;
+        }
+
+        function validarForm() {
+            if ($("#txtName").val() == '') {
+                $("#txtName").focus();
+                toastMessage('warning', 'El Nombre es obligatorio.');
+                return false;
+            }
+
+            if ($("#txtSede").val() == '') {
+                $("#txtSede").focus();
+                toastMessage('warning', 'La Sede es obligatoria.');
+                return false;
+            }
+
+            return true;
+        }
+
+
+        function deleteEditorial(idEditorial) {
+            showProgress('Eliminando Editorial');
+            $.ajax({
+                url: '@Url.Action("DeleteEditorial", "Editorial")',
+                method: 'DELETE',
+                data: {
+                    idEditorial: idEditorial
+                },
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+                    if (data.isSuccess) {
+
+                        listEditorial = listEditorial.filter(x => x.id != idEditorial);
+                        loadGridEditorial(listEditorial);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            data.message,
+                            'success');
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function insertEditorial(editorial) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("InsertEditorial", "Editorial")',
+                method: 'POST',
+                data: editorial,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalEditorial').modal('hide');
+                        cleanForm();
+                        getAllEditorial();
+                        toastMessage('success', data.message);
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+
+        function updateEditorial(editorial) {
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("UpdateEditorial", "Editorial")',
+                method: 'PUT',
+                data: editorial,
+                dataType: "json",
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        $('#modalEditorial').modal('hide');
+
+                        listEditorial = listEditorial.filter(x => x.id != editorial.id);
+                        listEditorial.push(editorial);
+                        loadGridEditorial(listEditorial);
+                        toastMessage('success', data.message);
+
+                        cleanForm();
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                }
+            });
+        }
+    </script>
 }
-    </tbody>
-</table>

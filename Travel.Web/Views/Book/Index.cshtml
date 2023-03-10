@@ -279,7 +279,7 @@
                 confirmButtonText: 'Si, Eliminar!',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deleteAutor(idBook);
+                    deleteBook(idBook);
                 }
             });
         }
@@ -361,7 +361,7 @@
                         //listBook.push(book);
                         //console.log(listBook);
 
-                     getAllBooks();
+                        getAllBooks();
                         toastMessage('success', data.message);
 
                         cleanForm();
@@ -381,7 +381,7 @@
             });
         }
 
-        function deleteAutor(idBook) {
+        function deleteBook(idBook) {
             showProgress('Eliminando Libro');
             $.ajax({
                 url: '@Url.Action("DeleteBook", "Book")',

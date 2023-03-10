@@ -45,7 +45,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Book</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Libro</a>
                         </li>
                     </ul>
                 </div>
@@ -102,13 +102,16 @@
     var spinnerVisible = false;
     function showProgress(title) {
         if (!spinnerVisible) {
+            console.log("se abre modal");
             if (title != undefined && title != null) {
                 $("#mensaje-modal-procesando").html(title);
             }
             else {
                 $("#mensaje-modal-procesando").html('Por favor espere');
             }
-            $("#container-modal-procesando").modal({ backdrop: 'static', keyboard: false });
+            
+            //$("#container-modal-procesando").modal({ backdrop: 'static', keyboard: false});
+            $('#container-modal-procesando').modal('show')
 
             spinnerVisible = true;
         }
@@ -116,9 +119,11 @@
 
     function hideProgress() {
         if (spinnerVisible) {
+            console.log("se cierra modal");
             setTimeout(function () {
                 $('#container-modal-procesando').modal('hide');
-            }, 500);
+            }, 600);
+            //$('#container-modal-procesando').modal('hide');
             spinnerVisible = false;
         }
     }

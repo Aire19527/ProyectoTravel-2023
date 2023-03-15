@@ -8,5 +8,6 @@ namespace Travel.Domain.DTO.Library.Book
     {
         public string Editorial { get; set; }
         public string Autor { get; set; }
+        public string UrlImagen { get; set; }
     }
 }

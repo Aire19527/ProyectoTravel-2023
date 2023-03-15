@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Travel.Domain.DTO.Library.Book
 {
@@ -13,5 +14,7 @@ namespace Travel.Domain.DTO.Library.Book
         [MaxLength(500)]
         public string Sinopsis { get; set; }
         public int N_Pages { get; set; }
+
+        public IFormFile FileImage { get; set; }
     }
 }

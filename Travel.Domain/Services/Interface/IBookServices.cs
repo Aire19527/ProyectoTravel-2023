@@ -1,4 +1,5 @@
 ﻿using Infraestructure.Entity.Model;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;

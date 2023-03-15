@@ -88,6 +88,15 @@ namespace Commnon.Utils.Resources {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El archivo seleccionado debe ser una imagen con formato [jpg,jpeg,png,gif,bmp].
+        /// </summary>
+        public static string ImgExtension {
+            get {
+                return ResourceManager.GetString("ImgExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El email: [{0}] no es válido..
         /// </summary>
         public static string InvalidEmail {

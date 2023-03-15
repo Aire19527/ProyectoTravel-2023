@@ -126,6 +126,9 @@
   <data name="Error500" xml:space="preserve">
     <value>Ha ocurrido un error interno.</value>
   </data>
+  <data name="ImgExtension" xml:space="preserve">
+    <value>El archivo seleccionado debe ser una imagen con formato [jpg,jpeg,png,gif,bmp]</value>
+  </data>
   <data name="InvalidEmail" xml:space="preserve">
     <value>El email: [{0}] no es válido.</value>
   </data>

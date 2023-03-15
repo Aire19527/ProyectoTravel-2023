@@ -12,9 +12,11 @@ using Travel.Domain.DTO;
 using Travel.Domain.DTO.Library;
 using Commnon.Utils.Resources;
 using Travel.Domain.DTO.Library.Autor;
+using Travel.Web.Handlers;
 
 namespace Travel.Web.Controllers
 {
+    [TypeFilter(typeof(CustomExceptionHandler))]
     public class AutorController : Controller
     {
         private readonly IAutorServices _autoresServices;

@@ -6,25 +6,31 @@ using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO;
 using Travel.Domain.Services.Interface;
 using Travel.Domain.DTO.Library.Book;
+using Travel.Web.Handlers;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Travel.Web.Controllers
 {
+    [TypeFilter(typeof(CustomExceptionHandler))]
     public class BookController : Controller
     {
         #region Attributes
         private readonly IBookServices _bookServices;
+        private readonly IHostingEnvironment _environment;
         #endregion
 
         #region Builder
-        public BookController(IBookServices bookServices)
+        public BookController(IBookServices bookServices, IHostingEnvironment environment)
         {
             _bookServices = bookServices;
+            _environment = environment;
         }
         #endregion
 
         #region Views
         public IActionResult Index()
         {
+
             return View();
         }
         #endregion

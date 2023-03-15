@@ -14,9 +14,11 @@ using Commnon.Utils.Resources;
 using Travel.Domain.DTO.Library.Autor;
 using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Editorial;
+using Travel.Web.Handlers;
 
 namespace Travel.Web.Controllers
 {
+    [TypeFilter(typeof(CustomExceptionHandler))]
     public class EditorialController : Controller
     {
         #region Attributes

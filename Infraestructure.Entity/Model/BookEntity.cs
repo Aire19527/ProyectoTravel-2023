@@ -23,7 +23,7 @@ namespace Infraestructure.Entity.Model
         [MaxLength(500)]
         public string Sinopsis { get; set; }
         public int N_Pages { get; set; }
-
+        public string UrlImage { get; set; }
 
         public EditorialEntity EditorialEntity { get; set; }
         public AutorEntity AutorEntity { get; set; }

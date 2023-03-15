@@ -81,6 +81,7 @@
 
 
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -99,6 +100,25 @@
                         </div>
                     </div>
 
+                    <div class="row" id="sectionFile">
+                        <div class="col-md-12 form-group">
+                            <label for="recipient-name" class="col-form-label">Imagen</label>
+                            <input type="file"
+                                   class="form-control"
+                                   accept="image/*"
+                                   id="fileImage"
+                                   style="padding: 3px !important;">
+                        </div>
+                    </div>
+
+                    <div class="row" id="sectionImg">
+                        <div class="col-md-12 form-group">
+                            <img id="showImg"
+                                 class="rounded mx-auto d-block"
+                                 style="height: 300px;"
+                                 alt="imagen del libro">
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -106,7 +126,7 @@
                     <i class="fas fa-window-close"></i>
                     Cancelar
                 </button>
-                <button type="button" id="btnSave" class="btn btn-success"  onclick="saveBook()">
+                <button type="button" id="btnSave" class="btn btn-success" onclick="saveBook()">
                     <i class="far fa-save"></i>
                     Guardar
                 </button>
@@ -182,18 +202,18 @@
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                                <tr>
-                                            <th>`+ data[i].title + `</th>
-                                            <th>`+ data[i].autor + `</th>
-                                            <th>`+ data[i].editorial + `</th>
-                                            <th>`+ data[i].n_Pages + `</th>
-                                    <td>
-                                        <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                        <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                                <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
-                                    </td>
-                                </tr>
-                      `;
+                                                        <tr>
+                                                                    <th>`+ data[i].title + `</th>
+                                                                    <th>`+ data[i].autor + `</th>
+                                                                    <th>`+ data[i].editorial + `</th>
+                                                                    <th>`+ data[i].n_Pages + `</th>
+                                                            <td>
+                                                                <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                                                <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                                        <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
+                                                            </td>
+                                                        </tr>
+                                              `;
                 $('#bodyBook').append(tr);
             }
 
@@ -201,20 +221,35 @@
 
         function saveBook() {
             if (validarForm()) {
-                let parametro = {
-                    title: $("#txtTitulo").val(),
-                    n_Pages: $("#txtNumberPages").val(),
-                    sinopsis: $("#txtSinopsis").val(),
-                    idEditorial: idEditorial,
-                    idAutor: idAutor
-                };
-                console.log(parametro);
+
+                var formData = new FormData();
+                formData.append("title", $("#txtTitulo").val());
+                formData.append("n_Pages", $("#txtNumberPages").val());
+                formData.append("sinopsis", $("#txtSinopsis").val());
+                formData.append("idEditorial", idEditorial);
+                formData.append("idAutor", idAutor);
+
+                var myfile = document.getElementById("fileImage");
+                if (myfile.files.length > 0) {
+                    var files = $("#fileImage")[0].files;
+                    formData.append("FileImage", files[0]);
+                }
+
+
+                //let parametro = {
+                //    title: $("#txtTitulo").val(),
+                //    n_Pages: $("#txtNumberPages").val(),
+                //    sinopsis: $("#txtSinopsis").val(),
+                //    idEditorial: idEditorial,
+                //    idAutor: idAutor
+                //};
+                console.log(formData);
 
                 if (idBook == 0) {
-                    insertBook(parametro);
+                    insertBook(formData);
                 } else {
-                    parametro.id = idBook;
-                    updateAutor(parametro);
+                    formData.append("id", idBook);
+                    updateAutor(formData);
                 }
             }
         }
@@ -223,10 +258,12 @@
             $("#txtTitulo").val('');
             $("#txtNumberPages").val('');
             $("#txtSinopsis").val('');
+            $("#fileImage").val('');
             idAutor = 0;
             idEditorial = 0;
 
-
+            loadCmbAutor(listAutor);
+            loadCmbEditorial(listEditorial);
         }
 
         function validarForm() {
@@ -266,9 +303,14 @@
         //funciones call crud
         function newBook() {
             cleanForm();
+            $('#sectionImg').attr('hidden', true);
+            $('#sectionFile').attr('hidden', false);
             viewDatail(false);
             $('#idTituloModalBook').html("Crear Libro");
             $('#modalBook').modal({ keyboard: true });
+
+          
+
         }
 
         function deleteBookConfirm(idBook) {
@@ -288,7 +330,8 @@
             });
         }
 
-        function editBook(id){
+        function editBook(id) {
+
             idBook = id;
             let book = listBook.find(x => x.id == idBook);
             console.log(book);
@@ -303,6 +346,10 @@
             loadCmbAutor(listAutor, idAutor);
             loadCmbEditorial(listEditorial, idEditorial);
 
+            $("#showImg").attr('src', book.urlImagen);
+            $('#sectionImg').attr('hidden', false);
+            $('#sectionFile').attr('hidden', false);
+
             viewDatail(false);
             $('#idTituloModalBook').html("Editar Libro");
             $('#modalBook').modal({ keyboard: true });
@@ -316,6 +363,8 @@
                 method: 'POST',
                 data: book,
                 dataType: "json",
+                contentType: false,
+                processData: false,
                 success: function (data) {
                     hideProgress();
                     console.log(data);
@@ -335,8 +384,19 @@
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     hideProgress();
-                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    //toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
                     console.error(xhr, textStatus, errorThrown);
+                    if (xhr.status == 400) {
+                        Swal.fire(
+                            'Alerta!',
+                            xhr.responseJSON.message,
+                            'warning');
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            xhr.responseJSON.message,
+                            'error');
+                    }
                 }
             });
         }
@@ -348,6 +408,8 @@
                 method: 'PUT',
                 data: book,
                 dataType: "json",
+                contentType: false,
+                processData: false,
                 success: function (data) {
                     hideProgress();
                     console.log(data);
@@ -355,16 +417,6 @@
                     if (data.isSuccess) {
                         $('#modalBook').modal('hide');
 
-                        //console.log("Paso #1");
-                        //console.log(listBook);
-                        
-                        //console.log("Paso #2");
-                        //listBook = listBook.filter(x => x.id != book.id);
-                        //console.log(listBook);
-
-                        //console.log("Paso #3");
-                        //listBook.push(book);
-                        //console.log(listBook);
 
                         getAllBooks();
                         toastMessage('success', data.message);
@@ -380,8 +432,19 @@
                 },
                 error: function (xhr, textStatus, errorThrown) {
                     hideProgress();
-                    toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    //toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
                     console.error(xhr, textStatus, errorThrown);
+                    if (xhr.status == 400) {
+                        Swal.fire(
+                            'Alerta!',
+                            xhr.responseJSON.message,
+                            'warning');
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            xhr.responseJSON.message,
+                            'error');
+                    }
                 }
             });
         }
@@ -420,9 +483,6 @@
                 }
             });
         }
-
-
-
 
         ///Servicios Autor
         function getAllAutor() {
@@ -536,14 +596,16 @@
 
             loadCmbAutor(listAutor, idAutor);
             loadCmbEditorial(listEditorial, idEditorial);
+            $("#showImg").attr('src', book.urlImagen);
+            $('#sectionImg').attr('hidden', false);
+            $('#sectionFile').attr('hidden', true);
 
             $('#idTituloModalBook').html("Detalle Libro");
             $('#modalBook').modal({ keyboard: true });
-
             viewDatail(true);
         }
 
-        function viewDatail(habilitar){
+        function viewDatail(habilitar) {
             $("#txtTitulo").attr('disabled', habilitar);
             $("#txtNumberPages").attr('disabled', habilitar);
             $("#txtSinopsis").attr('disabled', habilitar);
@@ -551,9 +613,5 @@
             $("#cmbAutor").attr('disabled', habilitar);
             $('#btnSave').attr('hidden', habilitar);
         }
-
-
-
-
     </script>
 }

@@ -97,6 +97,26 @@ namespace Travel.Web.Controllers
             return action;
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateImageBook(Book_Dto book)
+        {
+            IActionResult action;
+            string result = await _bookServices.UpdateImageBook(book);
+            ResponseDto response = new ResponseDto()
+            {
+                IsSuccess = !string.IsNullOrEmpty(result),
+                Message = !string.IsNullOrEmpty(result) ? "Imagen Actualizada satisfatoriamente": "Imagen Actualizada satisfatoriamente",
+                Result = result
+            };
+
+            if (!string.IsNullOrEmpty(result))
+                action = Ok(response);
+            else
+                action = BadRequest(response);
+
+            return action;
+        }
+
 
         [HttpDelete]
         public async Task<IActionResult> DeleteBook(int idBook)

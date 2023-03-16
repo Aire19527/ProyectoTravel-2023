@@ -6,18 +6,12 @@ using Infraestructure.Entity.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Travel.Domain.DTO.Library.Book;
 using Travel.Domain.Services.Interface;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Travel.Domain.Services
 {
@@ -97,10 +91,6 @@ namespace Travel.Domain.Services
 
         public async Task<bool> UpdateBook(Book_Dto update)
         {
-            string urlImage = string.Empty;
-            if (update.FileImage != null)
-                urlImage = UploadImage(update.FileImage);
-
             BookEntity book = GetBook(update.Id);
 
             book.Title = update.Title;
@@ -108,11 +98,40 @@ namespace Travel.Domain.Services
             book.N_Pages = update.N_Pages;
             book.IdEditorial = update.IdEditorial;
             book.IdAutor = update.IdAutor;
-            book.UrlImage = urlImage;
 
             _unitOfWork.BookRepository.Update(book);
             return await _unitOfWork.Save() > 0;
         }
+
+        public async Task<string> UpdateImageBook(Book_Dto update)
+        {
+            string urlImage = string.Empty;
+            if (update.FileImage != null)
+                urlImage = UploadImage(update.FileImage);
+            else
+                throw new BusinessException("Por favor seleccionar una imagen.");
+
+            BookEntity book = GetBook(update.Id);
+
+            if (!string.IsNullOrEmpty(book.UrlImage))
+                DeleteImage(book.UrlImage);
+
+            book.UrlImage = urlImage;
+
+            _unitOfWork.BookRepository.Update(book);
+            await _unitOfWork.Save();
+
+            return urlImage;
+        }
+
+        private void DeleteImage(string path)
+        {
+            string fullPath = Path.Combine(_environment.WebRootPath, path);
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+        }
+
+
 
         private string UploadImage(IFormFile fileImage)
         {
@@ -129,6 +148,7 @@ namespace Travel.Domain.Services
             if (!Directory.Exists(uploads))
                 Directory.CreateDirectory(uploads);
 
+
             string uniqueFileName = Helper.GetUniqueFileName(fileImage.FileName);
             string filePath = $"{uploads}/{uniqueFileName}";
             using (var stream = System.IO.File.Create(filePath))
@@ -142,6 +162,9 @@ namespace Travel.Domain.Services
         public async Task<bool> DeleteBook(int idBook)
         {
             BookEntity book = GetBook(idBook);
+            if (!string.IsNullOrEmpty(book.UrlImage))
+                DeleteImage(book.UrlImage);
+
             _unitOfWork.BookRepository.Delete(book);
 
             return await _unitOfWork.Save() > 0;

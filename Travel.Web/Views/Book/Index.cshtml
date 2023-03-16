@@ -103,14 +103,25 @@
                     <div class="row" id="sectionFile">
                         <div class="col-md-12 form-group">
                             <label for="recipient-name" class="col-form-label">Imagen</label>
-                            <input type="file"
-                                   class="form-control"
-                                   accept="image/*"
-                                   id="fileImage"
-                                   style="padding: 3px !important;">
-                        </div>
-                    </div>
 
+                            <div class="input-group mb-3">
+                                <input type="file"
+                                       class="form-control"
+                                       accept="image/*"
+                                       id="fileImage"
+                                       style="padding: 3px !important;">
+                                <div class="input-group-append">
+                                    <button class="btn btn-info" type="button" onclick="updateImageBook()">
+
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    
                     <div class="row" id="sectionImg">
                         <div class="col-md-12 form-group">
                             <img id="showImg"
@@ -202,18 +213,18 @@
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                                                        <tr>
-                                                                    <th>`+ data[i].title + `</th>
-                                                                    <th>`+ data[i].autor + `</th>
-                                                                    <th>`+ data[i].editorial + `</th>
-                                                                    <th>`+ data[i].n_Pages + `</th>
-                                                            <td>
-                                                                <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                                                <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                                                        <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
-                                                            </td>
-                                                        </tr>
-                                              `;
+                                                                                        <tr>
+                                                                                                    <th>`+ data[i].title + `</th>
+                                                                                                    <th>`+ data[i].autor + `</th>
+                                                                                                    <th>`+ data[i].editorial + `</th>
+                                                                                                    <th>`+ data[i].n_Pages + `</th>
+                                                                                            <td>
+                                                                                                <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                                                                                                <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                                                                                        <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                              `;
                 $('#bodyBook').append(tr);
             }
 
@@ -249,7 +260,7 @@
                     insertBook(formData);
                 } else {
                     formData.append("id", idBook);
-                    updateAutor(formData);
+                    updateBook(formData);
                 }
             }
         }
@@ -261,6 +272,7 @@
             $("#fileImage").val('');
             idAutor = 0;
             idEditorial = 0;
+            idBook = 0;
 
             loadCmbAutor(listAutor);
             loadCmbEditorial(listEditorial);
@@ -309,7 +321,7 @@
             $('#idTituloModalBook').html("Crear Libro");
             $('#modalBook').modal({ keyboard: true });
 
-          
+
 
         }
 
@@ -401,7 +413,7 @@
             });
         }
 
-        function updateAutor(book) {
+        function updateBook(book) {
             showProgress();
             $.ajax({
                 url: '@Url.Action("UpdateBook", "Book")',
@@ -483,6 +495,67 @@
                 }
             });
         }
+
+        function updateImageBook() {
+             var formData = new FormData();
+                var myfile = document.getElementById("fileImage");
+                if (myfile.files.length > 0) {
+                    var files = $("#fileImage")[0].files;
+                    formData.append("FileImage", files[0]);
+                }else{
+                     toastMessage('warning', 'Es obligatorio seleccionar una imagen.');
+                     $("#fileImage").focus();
+                     return;
+                }
+            formData.append("id", idBook);
+
+
+            showProgress();
+            $.ajax({
+                url: '@Url.Action("UpdateImageBook", "Book")',
+                method: 'PUT',
+                data: formData,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    hideProgress();
+                    console.log(data);
+
+                    if (data.isSuccess) {
+                        //$('#modalBook').modal('hide');
+                        toastMessage('success', data.message);
+                        $("#showImg").attr('src', data.result);
+                        $("#fileImage").val('');
+                        getAllBooks();
+
+                    }
+                    else {
+                        Swal.fire(
+                            'Opps!',
+                            data.message,
+                            'error');
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    hideProgress();
+                    //toastMessage('error', 'Hubo un error al guardar, por favor intentarlo nuevamente!');
+                    console.error(xhr, textStatus, errorThrown);
+                    if (xhr.status == 400) {
+                        Swal.fire(
+                            'Alerta!',
+                            xhr.responseJSON.message,
+                            'warning');
+                    } else {
+                        Swal.fire(
+                            'Opps!',
+                            xhr.responseJSON.message,
+                            'error');
+                    }
+                }
+            });
+        }
+
 
         ///Servicios Autor
         function getAllAutor() {

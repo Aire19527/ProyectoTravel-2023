@@ -16,6 +16,7 @@ namespace Travel.Domain.Services.Interface
         Task<bool> InsertBook(AddBook_Dto add);
 
         Task<bool> UpdateBook(Book_Dto update);
+        Task<string> UpdateImageBook(Book_Dto update);
 
         Task<bool> DeleteBook(int idBook);
     }

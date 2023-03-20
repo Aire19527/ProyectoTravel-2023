@@ -158,5 +158,14 @@ namespace Commnon.Utils.Resources {
                 return ResourceManager.GetString("ItemUpdated", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El Nombre de Usuario ya se encentra registrado en nuestro sistema, por favor usar otro..
+        /// </summary>
+        public static string RegisteredUser {
+            get {
+                return ResourceManager.GetString("RegisteredUser", resourceCulture);
+            }
+        }
     }
 }

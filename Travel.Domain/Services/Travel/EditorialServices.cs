@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Travel.Domain.DTO.Library.Autor;
 using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Editorial;
-using Travel.Domain.Services.Interface;
+using Travel.Domain.Services.Travel.Interface;
 
-namespace Travel.Domain.Services
+namespace Travel.Domain.Services.Travel
 {
     public class EditorialServices : IEditorialServices
     {

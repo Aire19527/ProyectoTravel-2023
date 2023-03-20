@@ -110,9 +110,8 @@
                                        accept="image/*"
                                        id="fileImage"
                                        style="padding: 3px !important;">
-                                <div class="input-group-append">
+                                <div class="input-group-append" id="btnSaveImag">
                                     <button class="btn btn-info" type="button" onclick="updateImageBook()">
-
                                         <i class="fa fa-save"></i>
                                     </button>
                                 </div>
@@ -317,6 +316,9 @@
             cleanForm();
             $('#sectionImg').attr('hidden', true);
             $('#sectionFile').attr('hidden', false);
+            $('#btnSaveImag').attr('hidden', true);
+
+
             viewDatail(false);
             $('#idTituloModalBook').html("Crear Libro");
             $('#modalBook').modal({ keyboard: true });
@@ -361,6 +363,7 @@
             $("#showImg").attr('src', book.urlImagen);
             $('#sectionImg').attr('hidden', false);
             $('#sectionFile').attr('hidden', false);
+            $('#btnSaveImag').attr('hidden', false);
 
             viewDatail(false);
             $('#idTituloModalBook').html("Editar Libro");

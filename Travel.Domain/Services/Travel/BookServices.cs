@@ -11,9 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Travel.Domain.DTO.Library.Book;
-using Travel.Domain.Services.Interface;
+using Travel.Domain.Services.Travel.Interface;
 
-namespace Travel.Domain.Services
+namespace Travel.Domain.Services.Travel
 {
     public class BookServices : IBookServices
     {
@@ -151,7 +151,7 @@ namespace Travel.Domain.Services
 
             string uniqueFileName = Helper.GetUniqueFileName(fileImage.FileName);
             string filePath = $"{uploads}/{uniqueFileName}";
-            using (var stream = System.IO.File.Create(filePath))
+            using (var stream = File.Create(filePath))
             {
                 fileImage.CopyTo(stream);
             }

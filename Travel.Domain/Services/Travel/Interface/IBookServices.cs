@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Domain.DTO.Library.Book;
 
-namespace Travel.Domain.Services.Interface
+namespace Travel.Domain.Services.Travel.Interface
 {
     public interface IBookServices
     {

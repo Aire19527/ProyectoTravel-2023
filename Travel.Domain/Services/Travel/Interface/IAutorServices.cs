@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Autor;
 
-namespace Travel.Domain.Services.Interface
+namespace Travel.Domain.Services.Travel.Interface
 {
     public interface IAutorServices
     {

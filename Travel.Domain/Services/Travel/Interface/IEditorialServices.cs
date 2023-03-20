@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Domain.DTO.Library.Editorial;
 
-namespace Travel.Domain.Services.Interface
+namespace Travel.Domain.Services.Travel.Interface
 {
     public interface IEditorialServices
     {

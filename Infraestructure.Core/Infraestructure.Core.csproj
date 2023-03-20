@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Commnon.Utils\Commnon.Utils.csproj" />
     <ProjectReference Include="..\Infraestructure.Entity\Infraestructure.Entity.csproj" />
   </ItemGroup>
 

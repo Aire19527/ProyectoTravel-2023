@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Infraestructure.Core.Data;
 using Infraestructure.Entity.Model;
-using Travel.Domain.Services.Interface;
 using Travel.Domain.DTO;
 using Travel.Domain.Services;
 using Commnon.Utils.Resources;
@@ -15,6 +14,7 @@ using Travel.Domain.DTO.Library.Autor;
 using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Editorial;
 using Travel.Web.Handlers;
+using Travel.Domain.Services.Travel.Interface;
 
 namespace Travel.Web.Controllers
 {

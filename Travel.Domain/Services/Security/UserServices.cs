@@ -28,14 +28,14 @@ namespace Travel.Domain.Services.Security
 
         #region Methods
 
-        public bool Login(LoginDto login)
+        public UserEntity Login(LoginDto login)
         {
-            var user = _unitOfWork.UserRepository.FirstOrDefault(x => x.UserName.ToLower() == login.UserName.ToLower()
+            UserEntity user = _unitOfWork.UserRepository.FirstOrDefault(x => x.UserName.ToLower() == login.UserName.ToLower()
                                                                   && x.Password == EncryptProvider.Sha256(login.Password));
             if (user == null)
                 throw new BusinessException(GeneralMessages.BadCredentials);
 
-            return true;
+            return user;
         }
 
 

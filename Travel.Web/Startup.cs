@@ -1,21 +1,12 @@
 using Infraestructure.Core.Data;
-using Infraestructure.Core.Repository;
-using Infraestructure.Core.Repository.Interface;
-using Infraestructure.Core.UnitOfWork;
-using Infraestructure.Core.UnitOfWork.Interface;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Travel.Domain.Services;
-using Travel.Domain.Services.Interface;
 using Travel.Web.Handlers;
 
 namespace Travel.Web
@@ -45,6 +36,18 @@ namespace Travel.Web
             DependencyInyectionHandler.DependencyInyectionConfig(services);
             #endregion
 
+            #region Authentication
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddCookie(options =>
+               {
+                   options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                   options.SlidingExpiration = true;
+                   options.AccessDeniedPath = "/Forbidden/";
+                   options.LoginPath = "/User/Login";
+               });
+
+            #endregion
+
             //Esto es para que refresque los datos en ejecución
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
@@ -68,6 +71,9 @@ namespace Travel.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //#1
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

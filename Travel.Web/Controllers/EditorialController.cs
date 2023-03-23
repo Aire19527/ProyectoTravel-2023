@@ -15,9 +15,11 @@ using Travel.Domain.DTO.Library;
 using Travel.Domain.DTO.Library.Editorial;
 using Travel.Web.Handlers;
 using Travel.Domain.Services.Travel.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Travel.Web.Controllers
 {
+    [Authorize]
     [TypeFilter(typeof(CustomExceptionHandler))]
     public class EditorialController : Controller
     {

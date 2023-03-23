@@ -151,6 +151,6 @@
     <value>Registro actualizado satisfactoriamente.</value>
   </data>
   <data name="RegisteredUser" xml:space="preserve">
-    <value>El Nombre de Usuario ya se encentra registrado en nuestro sistema, por favor usar otro.</value>
+    <value>El Nombre de Usuario ya se encuentra registrado en nuestro sistema, por favor usar otro.</value>
   </data>
 </root>

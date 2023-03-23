@@ -160,7 +160,7 @@ namespace Commnon.Utils.Resources {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El Nombre de Usuario ya se encentra registrado en nuestro sistema, por favor usar otro..
+        ///   Busca una cadena traducida similar a El Nombre de Usuario ya se encuentra registrado en nuestro sistema, por favor usar otro..
         /// </summary>
         public static string RegisteredUser {
             get {

@@ -8,9 +8,11 @@ using Travel.Domain.DTO.Library.Book;
 using Travel.Web.Handlers;
 using Microsoft.AspNetCore.Hosting;
 using Travel.Domain.Services.Travel.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Travel.Web.Controllers
 {
+    [Authorize]
     [TypeFilter(typeof(CustomExceptionHandler))]
     public class BookController : Controller
     {

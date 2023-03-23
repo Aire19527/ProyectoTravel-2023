@@ -13,7 +13,7 @@ namespace Travel.Domain.Services.Security.Interfaces
 {
     public interface IUserServices
     {
-        bool Login(LoginDto login);
+        UserEntity Login(LoginDto login);
 
 
         Task<bool> RegisterUser(AddUserDto add);

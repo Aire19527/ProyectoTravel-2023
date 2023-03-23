@@ -13,9 +13,11 @@ using Commnon.Utils.Resources;
 using Travel.Domain.DTO.Library.Autor;
 using Travel.Web.Handlers;
 using Travel.Domain.Services.Travel.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Travel.Web.Controllers
 {
+    [Authorize]
     [TypeFilter(typeof(CustomExceptionHandler))]
     public class AutorController : Controller
     {

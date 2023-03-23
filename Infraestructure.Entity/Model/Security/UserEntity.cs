@@ -22,5 +22,8 @@ namespace Infraestructure.Entity.Model.Security
         [ForeignKey("RolEntity")]
         public int IdRol { get; set; }
         public RolEntity RolEntity { get; set; }
+
+        [NotMapped]
+        public string FullName { get { return $"{this.Name} {this.LastName}"; } }
     }
 }

@@ -9,6 +9,7 @@ using Travel.Web.Handlers;
 using Microsoft.AspNetCore.Hosting;
 using Travel.Domain.Services.Travel.Interface;
 using Microsoft.AspNetCore.Authorization;
+using Commnon.Utils.Enums;
 
 namespace Travel.Web.Controllers
 {
@@ -40,6 +41,7 @@ namespace Travel.Web.Controllers
         #region Servicios
 
         [HttpGet]
+        [CustomPermissionFilter(Enums.Permission.ConsultarUsuarios)]
         public IActionResult GetAllBook()
         {
             var result = _bookServices.GetAllBook();

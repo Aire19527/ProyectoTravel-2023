@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Security.Claims;
 using System.Text;
 
 namespace Commnon.Utils.Helpers
@@ -34,8 +35,6 @@ namespace Commnon.Utils.Helpers
             fileName = Path.GetFileName(fileName);
             return $"{Guid.NewGuid().ToString()}{Path.GetExtension(fileName)}";
         }
-
-      
 
     }
 }

@@ -167,5 +167,14 @@ namespace Commnon.Utils.Resources {
                 return ResourceManager.GetString("RegisteredUser", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estimado usuario, no posees los suficientes privilegios para realizar esta acción. Por favor contacta con un administrador..
+        /// </summary>
+        public static string WithoutPermission {
+            get {
+                return ResourceManager.GetString("WithoutPermission", resourceCulture);
+            }
+        }
     }
 }

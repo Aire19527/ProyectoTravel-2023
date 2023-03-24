@@ -12,6 +12,7 @@ using static Commnon.Utils.Constant.Const;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Travel.Web.Controllers
 {
@@ -45,6 +46,7 @@ namespace Travel.Web.Controllers
         #region Services
         [HttpPost]
         [Route("LoginUser")]
+        [AllowAnonymous]
         public async Task<IActionResult> LoginUser(LoginDto login)
         {
             UserEntity user = _userServices.Login(login);
@@ -101,6 +103,7 @@ namespace Travel.Web.Controllers
 
         [HttpPost]
         [Route("RegisterUser")]
+        [AllowAnonymous]
         public async Task<IActionResult> RegisterUser(AddUserDto register)
         {
             IActionResult action;

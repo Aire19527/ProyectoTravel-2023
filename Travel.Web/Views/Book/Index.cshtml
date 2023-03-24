@@ -1,18 +1,32 @@
-﻿@{
+﻿@using static Commnon.Utils.Constant.Const;
+@using Commnon.Utils.Enums;
+
+@{
+
+    string idRol = User.Claims.FirstOrDefault(x => x.Type == TypeClaims.IdRol).Value;
+    
+    bool isAdmin = idRol ==Convert.ToInt32(Enums.RolUser.Administrador).ToString();
+
     ViewData["Title"] = "Libros";
 }
 
 <div class="row">
     <div class="col-md-6">
         <h1> Listado de Libros</h1>
+        <input type="text" id="txtIsAdmin" value="@isAdmin.ToString()"  hidden />
     </div>
 
-    <div class="col-md-6">
-        <button class="buttonTitle btn btn-primary" onclick="newBook()">
-            <i class="iconMargin fa-solid fa-circle-plus"></i>
-            Nuevo Libro
-        </button>
-    </div>
+    @if (isAdmin)
+    {
+        <div class="col-md-6">
+            <button class="buttonTitle btn btn-primary" onclick="newBook()">
+                <i class="iconMargin fa-solid fa-circle-plus"></i>
+                Nuevo Libro
+            </button>
+        </div>
+    }
+
+  
 </div>
 
 <hr />
@@ -120,7 +134,7 @@
 
 
                     </div>
-                    
+
                     <div class="row" id="sectionImg">
                         <div class="col-md-12 form-group">
                             <img id="showImg"
@@ -158,7 +172,13 @@
         var listEditorial = [];
         let idAutor = 0;
         let idEditorial = 0;
+
+        let isAdmin=false;
         $(document).ready(function () {
+            isAdmin= $("#txtIsAdmin").val() == 'True';
+            console.log("Es Administrador: "+isAdmin);
+            //isAdmin=
+
             getAllBooks();
 
             getAllAutor();
@@ -189,6 +209,7 @@
                 error: function (xhr, textStatus, errorThrown) {
                     hideProgress();
                     console.error(xhr, textStatus, errorThrown);
+                    swaMessage(xhr.status, xhr.responseJSON.message);
                 }
             });
         }
@@ -198,32 +219,63 @@
             if ($.fn.dataTable.isDataTable('#tblBook')) {
                 var table = $('#tblBook').DataTable();
                 table.destroy();
-                loadGridBook(data);
+
+                if(isAdmin){
+                    loadGridBookAdmin(data);
+                }else{
+                    loadGridBookStandar(data);
+                }
+
+                
                 loadGridDataTable('tblBook');
             }
             else {
-                loadGridBook(data);
+                if (isAdmin) {
+                    loadGridBookAdmin(data);
+                } else {
+                    loadGridBookStandar(data);
+                }
                 loadGridDataTable('tblBook');
             }
         }
 
-        function loadGridBook(data) {
+        function loadGridBookAdmin(data) {
             $('#bodyBook').html('');
 
             for (let i = 0; i < data.length; i++) {
                 var tr = `
-                                                                                        <tr>
-                                                                                                    <th>`+ data[i].title + `</th>
-                                                                                                    <th>`+ data[i].autor + `</th>
-                                                                                                    <th>`+ data[i].editorial + `</th>
-                                                                                                    <th>`+ data[i].n_Pages + `</th>
-                                                                                            <td>
-                                                                                                <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
-                                                                                                <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
-                                                                                                        <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Detalle</button>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                              `;
+                    <tr>
+                                <th>`+ data[i].title + `</th>
+                                <th>`+ data[i].autor + `</th>
+                                <th>`+ data[i].editorial + `</th>
+                                <th>`+ data[i].n_Pages + `</th>
+                        <td>
+                            <button  class="btn btn-warning" onclick="editBook(`+ data[i].id + `)"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn btn-danger" onclick="deleteBookConfirm(`+ data[i].id + `)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+                                            <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fa-solid fa-eye"></i> Detalle</button>
+                        </td>
+                    </tr>
+            `;
+                $('#bodyBook').append(tr);
+            }
+
+        }
+
+        function loadGridBookStandar(data) {
+            $('#bodyBook').html('');
+
+            for (let i = 0; i < data.length; i++) {
+                var tr = `
+                            <tr>
+                                        <th>`+ data[i].title + `</th>
+                                        <th>`+ data[i].autor + `</th>
+                                        <th>`+ data[i].editorial + `</th>
+                                        <th>`+ data[i].n_Pages + `</th>
+                                <td>
+                                   <button class="btn btn-info" onclick="detail(`+ data[i].id + `)"><i class="fa-solid fa-eye"></i> Detalle</button>
+                                </td>
+                            </tr>
+                    `;
                 $('#bodyBook').append(tr);
             }
 
@@ -500,16 +552,16 @@
         }
 
         function updateImageBook() {
-             var formData = new FormData();
-                var myfile = document.getElementById("fileImage");
-                if (myfile.files.length > 0) {
-                    var files = $("#fileImage")[0].files;
-                    formData.append("FileImage", files[0]);
-                }else{
-                     toastMessage('warning', 'Es obligatorio seleccionar una imagen.');
-                     $("#fileImage").focus();
-                     return;
-                }
+            var formData = new FormData();
+            var myfile = document.getElementById("fileImage");
+            if (myfile.files.length > 0) {
+                var files = $("#fileImage")[0].files;
+                formData.append("FileImage", files[0]);
+            } else {
+                toastMessage('warning', 'Es obligatorio seleccionar una imagen.');
+                $("#fileImage").focus();
+                return;
+            }
             formData.append("id", idBook);
 
 

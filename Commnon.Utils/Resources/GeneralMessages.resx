@@ -153,4 +153,7 @@
   <data name="RegisteredUser" xml:space="preserve">
     <value>El Nombre de Usuario ya se encuentra registrado en nuestro sistema, por favor usar otro.</value>
   </data>
+  <data name="WithoutPermission" xml:space="preserve">
+    <value>Estimado usuario, no posees los suficientes privilegios para realizar esta acción. Por favor contacta con un administrador.</value>
+  </data>
 </root>

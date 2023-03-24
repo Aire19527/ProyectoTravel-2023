@@ -47,7 +47,7 @@ namespace Travel.Domain.Services.Security
             UserEntity user = new UserEntity()
             {
                 Id = Guid.NewGuid(),
-                LastName = add.UserName,
+                LastName = add.LastName,
                 Name = add.Name,
                 UserName = add.UserName,
                 Password = EncryptProvider.Sha256(add.Password),

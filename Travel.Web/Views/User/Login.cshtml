@@ -7,8 +7,6 @@
 
 <br />
 <br />
-
-
 <div class="row">
     <div class="animate__animated animate__backInDown col-md-8 offset-2">
         <div class="card-header">
@@ -67,12 +65,13 @@
 
         function login() {
 
-
+            let url = "@ViewBag.ReturnUrl";
             var parametros = {
                 UserName: $("#UserName").val(),
-                Password: $("#Password").val()
+                Password: $("#Password").val(),
+                ReturnUrl: url
             };
-            console.log(parametros);
+
             if (parametros.UserName != "" && parametros.Password != "") {
 
                 showProgress();
@@ -85,8 +84,15 @@
                         console.log(data);
                         hideProgress();
                         if (data.isSuccess) {
-                            console.log("Usuario autenticado");
-                            window.location.href = "/Home/Index";
+                            console.log(data);
+
+                            if (data.result==''){
+                                window.location.href = "/Home/Index";
+                            }else{
+                                window.location.href = data.result;
+                            }
+
+                           
                         } else {
                             swaMessage(400, data.message);
                         }

@@ -14,5 +14,7 @@ namespace Travel.Domain.DTO.User
         [Required(ErrorMessage = "La contraseña es requerida")]
         [Display(Name = "Contraseña")]
         public string Password { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

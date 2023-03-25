@@ -20,7 +20,7 @@ namespace Travel.Web.Controllers
     public class UserController : Controller
     {
         #region Attributes
-        private readonly IUserServices _userServices; 
+        private readonly IUserServices _userServices;
         #endregion
 
         #region Builder
@@ -32,11 +32,15 @@ namespace Travel.Web.Controllers
 
         #region Views
 
-        public IActionResult Login()
+        [HttpGet]
+        public IActionResult Login(string returnUrl = null)
         {
+           
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -85,7 +89,7 @@ namespace Travel.Web.Controllers
                 // The full path or absolute URI to be used as an http 
                 // redirect response value.
             };
-           
+
             await HttpContext.SignInAsync(
                   CookieAuthenticationDefaults.AuthenticationScheme,
                                             new ClaimsPrincipal(claimsIdentity),
@@ -95,9 +99,16 @@ namespace Travel.Web.Controllers
             ResponseDto response = new ResponseDto()
             {
                 IsSuccess = true,
-                Result = true,
-                Message = string.Empty
+                Message = string.Empty,
+                Result= string.Empty
             };
+
+
+
+            if (!string.IsNullOrEmpty(login.ReturnUrl) && login.ReturnUrl != "/")
+                response.Result = login.ReturnUrl;
+
+
             return Ok(response);
         }
 
@@ -112,7 +123,7 @@ namespace Travel.Web.Controllers
             {
                 IsSuccess = result,
                 Result = result,
-                Message = result? GeneralMessages.ItemInserted : GeneralMessages.ItemNoInserted
+                Message = result ? GeneralMessages.ItemInserted : GeneralMessages.ItemNoInserted
             };
 
             if (response.IsSuccess)
